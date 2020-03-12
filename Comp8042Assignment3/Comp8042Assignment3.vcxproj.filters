@@ -18,6 +18,9 @@
     <ClCompile Include="Comp8042Assignment3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GISDataEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CO_Ouray.txt">
@@ -82,5 +85,10 @@
     <None Include=".DS_Store">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GISDataEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

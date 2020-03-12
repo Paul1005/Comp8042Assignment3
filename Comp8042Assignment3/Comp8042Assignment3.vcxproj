@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Comp8042Assignment3.cpp" />
+    <ClCompile Include="GISDataEntry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CO_Ouray.txt" />
@@ -176,6 +177,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".DS_Store" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GISDataEntry.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

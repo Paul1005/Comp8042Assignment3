@@ -153,6 +153,8 @@
   <ItemGroup>
     <ClCompile Include="Comp8042Assignment3.cpp" />
     <ClCompile Include="GISDataEntry.cpp" />
+    <ClCompile Include="Hashtable.cpp" />
+    <ClCompile Include="Quadtree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CO_Ouray.txt" />
@@ -180,6 +182,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GISDataEntry.h" />
+    <ClInclude Include="Hashtable.h" />
+    <ClInclude Include="Quadtree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

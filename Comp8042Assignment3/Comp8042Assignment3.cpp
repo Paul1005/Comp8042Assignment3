@@ -5,7 +5,9 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include "Hashtable.h"
 #include "GISDataEntry.h"
+
 using namespace std;
 
 int main()
@@ -21,6 +23,7 @@ int main()
 	vector<GISDataEntry> data;
 	string line;
 	ifstream outputFile("New_GIS.txt");
+	Hashtable<string> hashtable = Hashtable<string>();
 	if (outputFile.is_open())
 	{
 		int firstLine = true;
@@ -32,9 +35,14 @@ int main()
 			else {
 				GISDataEntry dataEntry(line);
 				data.push_back(dataEntry);
+				string key = dataEntry.COUNTY_NAME + dataEntry.STATE_ALPHA;
+				hashtable.insert(key);
 			}
 		}
 	}
+
+
+
 
 	//Part 2: Retrieving data for all GIS records matching given geographic coordinates
 	string latitude = "343417N";

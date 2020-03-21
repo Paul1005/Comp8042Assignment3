@@ -1,4 +1,6 @@
 #include <array>
+#include "Rectangle.h"
+
 using namespace std;
 // based on https://codereview.stackexchange.com/questions/154226/simple-quadtree-template-implementation 
 #pragma once
@@ -6,14 +8,29 @@ template <typename T>
 class Quadtree
 {
 public:
-	typedef std::array<Quadtree, 4> Children; // class scope typedef
+	int K;
+	typedef array<Quadtree, 4> Children; // class scope typedef
 
-	T data; // the template data
+	Rectangle area; 
+	vector<T> dataSets;
+
 	Quadtree* parent;
 
-	Quadtree(T _data) // constructor
+	Quadtree(int currentK, Rectangle currentArea) // constructor
 	{
-		data = _data;
+		K = currentK;
+		area = currentArea;
+	}
+
+	void addDataSet(T dataSet)
+	{
+		if (dataSets.size() < 4) {
+			dataSets.push_back(dataSet);
+		}
+		else {
+			cout << "is full";
+		}
+
 	}
 
 	void setChildren(Children nodes)
@@ -29,6 +46,10 @@ public:
 	Quadtree getChild(int _index) // keeps syntax consistent with std::array
 	{
 		return (*children)[_index];
+	}
+
+	Children getChildren() {
+		return Children;
 	}
 
 private:

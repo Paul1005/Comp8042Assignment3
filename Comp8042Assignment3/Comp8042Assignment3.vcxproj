@@ -152,9 +152,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Comp8042Assignment3.cpp" />
+    <ClCompile Include="DataSet.cpp" />
     <ClCompile Include="GISDataEntry.cpp" />
     <ClCompile Include="Hashtable.cpp" />
     <ClCompile Include="Quadtree.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CO_Ouray.txt" />
@@ -181,9 +183,11 @@
     <None Include=".DS_Store" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DataSet.h" />
     <ClInclude Include="GISDataEntry.h" />
     <ClInclude Include="Hashtable.h" />
     <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="Rectangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -20,30 +20,34 @@ class Hashtable {
 	int c;
 
 	/// All the buckets in the hashtable
-	vector<unsigned int> buckets;
+	K* buckets;
+
+	int* offsets;
 
 	/// Status of all the buckets
-	vector<BucketStatus> status;
+	BucketStatus* status;
 
 	/// Adjusts the capacity of the hashtable and rehashes
 	void expandAndRehash() {
 		c *= 2;
 
-		vector<unsigned int> newBuckets;
-		vector<BucketStatus> newStatus;
-		newBuckets.resize(c);
-		newStatus.resize(c);
+		K* newBuckets = new K[c];
+		BucketStatus* newStatus = new BucketStatus[c];
+		int* newOffsets = new int[c];
 
-		vector<unsigned int> tempBuckets;
-		vector<BucketStatus> tempStatus;
+		K* tempBuckets = new K[c];
+		BucketStatus* tempStatus = new BucketStatus[c];
+		int* tempOffsets = new int[c];
 
 		tempBuckets = buckets;
 		tempStatus = status;
+		tempOffsets = offsets;
 
 		buckets = newBuckets;
 		status = newStatus;
+		offsets = newOffsets;
 
-		for (int i = 0; i < tempBuckets.size(); i++) {
+		for (int i = 0; i < c; i++) {
 			if (tempStatus[i] == OCCUPIED) {
 				insert(tempBuckets[i]);
 			}
@@ -55,8 +59,10 @@ class Hashtable {
 public:
 	Hashtable() : numCollisions(0) {
 		c = 1024;
-		buckets.resize(c);
-		status.resize(c);
+		buckets = new K[c];
+		status = new BucketStatus[c];
+		offsets = new int[c];
+
 		size = 0;
 		numOfRehashes = 0;
 	}
@@ -80,7 +86,7 @@ public:
 	/// Tries to insert the given key into the hashtable.
 	/// Returns true if the element was inserted and false if not.
 	/// The insertion will fail if the element already exists in the input.
-	bool insert(const K& key) {
+	bool insert(const K& key, int offset) {
 		float loadFactor = (float)size / (float)c;
 		if (loadFactor >= 0.7) {
 			expandAndRehash();
@@ -98,6 +104,7 @@ public:
 		}
 		status[hi] = OCCUPIED;
 		buckets[hi] = key;
+		offsets[hi] = offset;
 		size++;
 		return true; // Key inserted successfully
 	}

@@ -43,9 +43,9 @@ public:
 		children[_index] = &node;
 	}
 
-	Quadtree getChild(int _index) // keeps syntax consistent with std::array
+	Quadtree& getChild(int _index)
 	{
-		return (*children)[_index];
+		return children[_index];
 	}
 
 	Children getChildren() {

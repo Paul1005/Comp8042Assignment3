@@ -18,7 +18,7 @@ float arcSecond = 1 / 3600;
 void insertIntoQuadtree(GISDataEntry dataEntry, Quadtree<DataSet>& quadtree, int offset) {
 	if (dataEntry.PRIM_LAT_DEC < quadtree.area.maxLat && dataEntry.PRIM_LAT_DEC > quadtree.area.minLat&& dataEntry.PRIM_LONG_DEC <quadtree.area.maxLong && dataEntry.PRIM_LONG_DEC > quadtree.area.minLong) { // if it fits in the designated area
 		bool wasAddedToExistingDataSet = false;
-		for (int i; i < quadtree.dataSets.size(); i++) { // see if we can add it to our existing data points
+		for (int i; i < quadtree.dataSets.size(); i++) { // see if we can add it to an existing data point
 			if (quadtree.dataSets[i].coordinate.first == dataEntry.PRIM_LAT_DEC && quadtree.dataSets[i].coordinate.second == dataEntry.PRIM_LONG_DEC) {
 				quadtree.dataSets[i].addOffset(offset);
 				wasAddedToExistingDataSet = true;
@@ -27,38 +27,27 @@ void insertIntoQuadtree(GISDataEntry dataEntry, Quadtree<DataSet>& quadtree, int
 		}
 
 		if (!wasAddedToExistingDataSet) { // if we can't
-			if (quadtree.dataSets.size() == quadtree.K) { // if it's full
-				if (quadtree.getChildren().size() == 0) { // see if node has already been partitioned, hopefully this works
-					// partition quadtree
+			if (quadtree.dataSets.size() == quadtree.K) { // if we already have K data points
+				if (quadtree.getChildren().size() == 0) { // if node hasn't already been partitioned
+					// create quadtree children
 					float top = quadtree.area.maxLat;
 					float bottom = quadtree.area.minLat;
 					float left = quadtree.area.minLong;
 					float right = quadtree.area.maxLong;
+					
 					Rectangle topLeftRectangle(top, top / 2, right / 2, left);
 					Quadtree<DataSet> topLeft(4, topLeftRectangle);
-
-					insertIntoQuadtree(dataEntry, topLeft, offset);
-					quadtree.setChild(0, topLeft);
-
+					
 					Rectangle topRightRectangle(top, top / 2, right, right / 2);
 					Quadtree<DataSet> topRight(4, topRightRectangle);
-
-					insertIntoQuadtree(dataEntry, topRight, offset);
-					quadtree.setChild(1, topRight);
-
+					
 					Rectangle bottomLeftRectangle(top / 2, bottom, right / 2, left);
 					Quadtree<DataSet> bottomLeft(4, bottomLeftRectangle);
-
-					insertIntoQuadtree(dataEntry, bottomLeft, offset);
-					quadtree.setChild(2, bottomLeft);
-
+					
 					Rectangle bottomRightRectangle(top / 2, bottom, right, right / 2);
 					Quadtree<DataSet> bottomRight(4, bottomRightRectangle);
 
-					insertIntoQuadtree(dataEntry, bottomRight, offset);
-					quadtree.setChild(3, bottomRight);
-
-					for (int i = 0; i < quadtree.dataSets.size(); i++) {
+					for (int i = 0; i < quadtree.dataSets.size(); i++) { // insert each of our old datasets into the children
 						if (quadtree.dataSets[i].coordinate.first < topLeft.area.maxLat && quadtree.dataSets[i].coordinate.first > topLeft.area.minLat&& quadtree.dataSets[i].coordinate.second <topLeft.area.maxLong && quadtree.dataSets[i].coordinate.second > topLeft.area.minLong) {
 							topLeft.addDataSet(quadtree.dataSets[i]);
 						}
@@ -72,6 +61,12 @@ void insertIntoQuadtree(GISDataEntry dataEntry, Quadtree<DataSet>& quadtree, int
 							bottomRight.addDataSet(quadtree.dataSets[i]);;
 						}
 					}
+
+					// add the children to this node.
+					quadtree.setChild(0, topLeft);
+					quadtree.setChild(1, topRight);
+					quadtree.setChild(2, bottomLeft);
+					quadtree.setChild(3, bottomRight);
 				}
 
 				// insert entry into a child node

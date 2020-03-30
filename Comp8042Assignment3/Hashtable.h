@@ -22,7 +22,7 @@ class Hashtable {
 	/// All the buckets in the hashtable
 	K* buckets;
 
-	int* offsets;
+	vector<int> *offsets;
 
 	/// Status of all the buckets
 	BucketStatus* status;
@@ -33,11 +33,11 @@ class Hashtable {
 
 		K* newBuckets = new K[c];
 		BucketStatus* newStatus = new BucketStatus[c];
-		int* newOffsets = new int[c];
+		vector<int> *newOffsets = new vector<int>[c];
 
 		K* tempBuckets = new K[c];
 		BucketStatus* tempStatus = new BucketStatus[c];
-		int* tempOffsets = new int[c];
+		vector<int> *tempOffsets = new vector<int>[c];
 
 		tempBuckets = buckets;
 		tempStatus = status;
@@ -49,7 +49,9 @@ class Hashtable {
 
 		for (int i = 0; i < c; i++) {
 			if (tempStatus[i] == OCCUPIED) {
-				insert(tempBuckets[i]);
+				for (int j = 0; j < offsets[i].size(); j++) {
+					insert(tempBuckets[i], offsets[i][j]);
+				}
 			}
 		}
 	}
@@ -61,7 +63,7 @@ public:
 		c = 1024;
 		buckets = new K[c];
 		status = new BucketStatus[c];
-		offsets = new int[c];
+		offsets = new vector<int> [c];
 
 		size = 0;
 		numOfRehashes = 0;
@@ -97,6 +99,7 @@ public:
 		unsigned int hi = h;
 		while (status[hi] == OCCUPIED) {
 			if (buckets[hi] == key)
+				offsets[hi].push_back(offset);
 				return false; // Key already exists
 			numCollisions++;
 			++i;
@@ -104,26 +107,27 @@ public:
 		}
 		status[hi] = OCCUPIED;
 		buckets[hi] = key;
-		offsets[hi] = offset;
+		offsets[hi].push_back(offset);
 		size++;
 		return true; // Key inserted successfully
 	}
 
-	bool search(const K& key) {
+	vector<int> search(const K& key) {
 		unsigned int h = hashFunction(key, c);
 		unsigned int i = 0;
 		unsigned int hi = h;
 		while (status[hi] != EMPTY) {
 			if (status[hi] == OCCUPIED && buckets[hi] == key) {
 				// Key found
-				return true;
+				return offsets[hi];
 			}
 			numCollisions++;
 			++i;
 			hi = (h + hash(i)) % c;
 		}
 		// Key not found. Hit an empty bucket.
-		return false;
+		vector<int> v;
+		return v;
 	}
 
 	bool erase(const K& key) {

@@ -22,7 +22,7 @@ class Hashtable {
 	/// All the buckets in the hashtable
 	K* buckets;
 
-	vector<int> *offsets;
+	vector<int>* offsets;
 
 	/// Status of all the buckets
 	BucketStatus* status;
@@ -33,11 +33,11 @@ class Hashtable {
 
 		K* newBuckets = new K[c];
 		BucketStatus* newStatus = new BucketStatus[c];
-		vector<int> *newOffsets = new vector<int>[c];
+		vector<int>* newOffsets = new vector<int>[c];
 
 		K* tempBuckets = new K[c];
 		BucketStatus* tempStatus = new BucketStatus[c];
-		vector<int> *tempOffsets = new vector<int>[c];
+		vector<int>* tempOffsets = new vector<int>[c];
 
 		tempBuckets = buckets;
 		tempStatus = status;
@@ -63,7 +63,7 @@ public:
 		c = 1024;
 		buckets = new K[c];
 		status = new BucketStatus[c];
-		offsets = new vector<int> [c];
+		offsets = new vector<int>[c];
 
 		size = 0;
 		numOfRehashes = 0;
@@ -100,7 +100,7 @@ public:
 		while (status[hi] == OCCUPIED) {
 			if (buckets[hi] == key)
 				offsets[hi].push_back(offset);
-				return false; // Key already exists
+			return false; // Key already exists
 			numCollisions++;
 			++i;
 			hi = (h + hash(i)) % c;
@@ -155,5 +155,15 @@ public:
 
 	int getNumOfRehashes() const {
 		return numOfRehashes;
+	}
+
+	void print() {
+		for (int i = 0; i < c; i++) {
+			cout << "feature name and state: " << buckets[i];
+			cout << "file offsets:";
+			for (int j = 0; j < offsets[i].size(); j++) {
+				cout << offsets[i][j];
+			}
+		}
 	}
 };

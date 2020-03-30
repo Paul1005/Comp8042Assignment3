@@ -211,7 +211,7 @@ int main()
 	}
 	
 	//Part 5: Displaying the in-memory indices in a human-readable manner
-	hashtable;
-	quadtree;
+	hashtable.print();
+	quadtree.print();
 }
 

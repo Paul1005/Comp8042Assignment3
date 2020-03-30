@@ -1,4 +1,5 @@
 #include <array>
+#include <iostream>
 #include "Rectangle.h"
 #include "DataSet.h"
 
@@ -91,6 +92,24 @@ public:
 			}
 		}
 		return offsets;
+	}
+
+	void print() {
+		if (children->size() == 4) {
+			for (int i = 0; i < children->max_size(); i++) {
+				getChild(i).print();
+			}
+		}
+		else {
+			for (DataSet dataSet : dataSets) {
+				cout << "latitude: " << dataSet.coordinate.first;
+				cout << "longitude: " << dataSet.coordinate.second;
+				cout << "file offsets:";
+				for (int offset : dataSet.offsets) {
+					cout << offset;
+				}
+			}
+		}
 	}
 private:
 	Children* children;

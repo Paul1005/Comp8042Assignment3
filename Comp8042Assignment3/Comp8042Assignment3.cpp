@@ -15,86 +15,6 @@ using namespace std;
 
 float arcSecond = 1 / 3600;
 
-void insertIntoQuadtree(GISDataEntry dataEntry, Quadtree* quadtree, int offset) {
-	if (dataEntry.PRIM_LAT_DEC < (*quadtree).area.maxLat && dataEntry.PRIM_LAT_DEC >(*quadtree).area.minLat&& dataEntry.PRIM_LONG_DEC <(*quadtree).area.maxLong && dataEntry.PRIM_LONG_DEC >(*quadtree).area.minLong) { // if it fits in the designated area
-		bool wasAddedToExistingDataSet = false;
-		for (int i = 0; i < (*quadtree).dataSets.size(); i++) { // see if we can add it to an existing data point
-			if ((*quadtree).dataSets[i].coordinate.first == dataEntry.PRIM_LAT_DEC && (*quadtree).dataSets[i].coordinate.second == dataEntry.PRIM_LONG_DEC) {
-				(*quadtree).dataSets[i].addOffset(offset);
-				wasAddedToExistingDataSet = true;
-				break;
-			}
-		}
-
-		if (!wasAddedToExistingDataSet) { // if we can't
-			if ((*quadtree).dataSets.size() == (*quadtree).K) { // if we already have K data points
-				if (!(*quadtree).isPartitioned) { // if node hasn't already been partitioned
-					// create quadtree children
-					float top = (*quadtree).area.maxLat;
-					float bottom = (*quadtree).area.minLat;
-					float left = (*quadtree).area.minLong;
-					float right = (*quadtree).area.maxLong;
-
-					Rectangle topLeftRectangle(top, top / 2, right / 2, left);
-					Quadtree topLeft(4, topLeftRectangle);
-
-					Rectangle topRightRectangle(top, top / 2, right, right / 2);
-					Quadtree topRight(4, topRightRectangle);
-
-					Rectangle bottomLeftRectangle(top / 2, bottom, right / 2, left);
-					Quadtree bottomLeft(4, bottomLeftRectangle);
-
-					Rectangle bottomRightRectangle(top / 2, bottom, right, right / 2);
-					Quadtree bottomRight(4, bottomRightRectangle);
-
-					for (int i = 0; i < (*quadtree).dataSets.size(); i++) { // insert each of our old datasets into the children
-						if ((*quadtree).dataSets[i].coordinate.first < topLeft.area.maxLat && (*quadtree).dataSets[i].coordinate.first > topLeft.area.minLat&& (*quadtree).dataSets[i].coordinate.second <topLeft.area.maxLong && (*quadtree).dataSets[i].coordinate.second > topLeft.area.minLong) {
-							topLeft.addDataSet((*quadtree).dataSets[i]);
-						}
-						else if ((*quadtree).dataSets[i].coordinate.first < topRight.area.maxLat && (*quadtree).dataSets[i].coordinate.first > topRight.area.minLat&& (*quadtree).dataSets[i].coordinate.second <topRight.area.maxLong && (*quadtree).dataSets[i].coordinate.second > topRight.area.minLong) {
-							topRight.addDataSet((*quadtree).dataSets[i]);;
-						}
-						else if ((*quadtree).dataSets[i].coordinate.first < bottomLeft.area.maxLat && (*quadtree).dataSets[i].coordinate.first > bottomLeft.area.minLat&& (*quadtree).dataSets[i].coordinate.second <bottomLeft.area.maxLong && (*quadtree).dataSets[i].coordinate.second > bottomLeft.area.minLong) {
-							bottomLeft.addDataSet((*quadtree).dataSets[i]);;
-						}
-						else if ((*quadtree).dataSets[i].coordinate.first < bottomRight.area.maxLat && (*quadtree).dataSets[i].coordinate.first > bottomRight.area.minLat&& (*quadtree).dataSets[i].coordinate.second <bottomRight.area.maxLong && (*quadtree).dataSets[i].coordinate.second > bottomRight.area.minLong) {
-							bottomRight.addDataSet((*quadtree).dataSets[i]);;
-						}
-					}
-
-					// add the children to this node.
-					topLeft.parent = quadtree;
-					quadtree->setChild(0, &topLeft);
-					topRight.parent = quadtree;
-					quadtree->setChild(1, &topRight);
-					bottomLeft.parent = quadtree;
-					quadtree->setChild(2, &bottomLeft);
-					bottomRight.parent = quadtree;
-					quadtree->setChild(3, &bottomRight);
-					quadtree->isPartitioned = true;
-				}
-
-				// insert entry into a child node
-				for (int i = 0; i < (*quadtree).dataSets.size(); i++) {
-					Quadtree topLeft = (*quadtree).getChild(0);
-					insertIntoQuadtree(dataEntry, &topLeft, offset);
-					Quadtree topRight = (*quadtree).getChild(1);
-					insertIntoQuadtree(dataEntry, &topRight, offset);
-					Quadtree bottomLeft = (*quadtree).getChild(2);
-					insertIntoQuadtree(dataEntry, &bottomLeft, offset);
-					Quadtree bottomRight = (*quadtree).getChild(3);
-					insertIntoQuadtree(dataEntry, &bottomRight, offset);
-				}
-			}
-			else { // if there's room, create a new dataset
-				DataSet newDataSet(dataEntry.PRIM_LAT_DEC, dataEntry.PRIM_LONG_DEC);
-				newDataSet.addOffset(offset);
-				quadtree->dataSets.push_back(newDataSet);
-			}
-		}
-	}
-}
-
 int main()
 {
 	vector<GISDataEntry> data;
@@ -117,8 +37,7 @@ int main()
 				data.push_back(dataEntry);
 				string key = dataEntry.FEATURE_NAME + ' ' + dataEntry.STATE_ALPHA;
 				hashtable.insert(key, offset);
-
-				insertIntoQuadtree(dataEntry, &quadtree, offset);
+				quadtree.insert(dataEntry, offset);
 			}
 			offset++;
 		}

@@ -10,7 +10,7 @@ class Quadtree
 {
 public:
 	int K;
-	typedef array<Quadtree, 4> Children; // class scope typedef
+	bool isPartitioned;
 
 	Rectangle area; 
 	vector<DataSet> dataSets;
@@ -20,6 +20,11 @@ public:
 	Quadtree(int currentK, Rectangle currentArea) : area(currentArea) // constructor
 	{
 		K = currentK;
+		isPartitioned = false;
+	}
+
+	Quadtree() : area(0, 0, 0, 0) {
+
 	}
 
 	void addDataSet(DataSet dataSet)
@@ -33,28 +38,41 @@ public:
 
 	}
 
-	void setChildren(Children nodes)
+	void setChild(int index, Quadtree node)
 	{
-		children = &nodes;
+		if (index == 0) {
+			topLeft = &node;
+		}
+		else if (index == 1) {
+			topRight = &node;
+		}
+		else if (index == 2) {
+			bottomLeft = &node;
+		}
+		else if (index == 3) {
+			bottomRight = &node;
+		}
 	}
 
-	void setChild(int _index, Quadtree node)
+	Quadtree getChild(int index)
 	{
-		children->at(_index) = node;
-	}
-
-	Quadtree getChild(int _index)
-	{
-		return children->at(_index);
-	}
-
-	Children* getChildren() {
-		return children;
+		if (index == 0) {
+			return *topLeft;
+		}
+		else if (index == 1) {
+			return *topRight;
+		}
+		else if (index == 2) {
+			return *bottomLeft;
+		}
+		else if (index == 3) {
+			return *bottomRight;
+		}
 	}
 
 	vector<int> find(float latitude, float longitude) {
-		if (children->size() == 4) {
-			for (int i = 0; i < children->max_size(); i++) {
+		if (isPartitioned) {
+			for (int i = 0; i < 4; i++) {
 				if (latitude < getChild(i).area.maxLat && latitude > getChild(i).area.minLat && longitude < getChild(i).area.maxLong && longitude > getChild(i).area.minLong) {
 					return getChild(i).find(latitude, longitude);
 				}
@@ -73,8 +91,8 @@ public:
 
 	vector<int> find(float latitude, float longitude, float halfHeight, float halfWidth) {
 		vector<int> offsets;
-		if (children->size() == 4) {
-			for (int i = 0; i < children->max_size(); i++) {
+		if (isPartitioned) {
+			for (int i = 0; i < 4; i++) {
 				if ((latitude + halfHeight > getChild(i).area.minLat && longitude + halfWidth > getChild(i).area.minLong) || 
 					(latitude + halfHeight > getChild(i).area.minLat && longitude - halfWidth < getChild(i).area.maxLat) ||
 					(latitude - halfHeight < getChild(i).area.maxLat && longitude + halfWidth > getChild(i).area.minLong) ||
@@ -95,8 +113,8 @@ public:
 	}
 
 	void print() {
-		if (children->size() == 4) {
-			for (int i = 0; i < children->max_size(); i++) {
+		if (isPartitioned) {
+			for (int i = 0; i < 4; i++) {
 				getChild(i).print();
 			}
 		}
@@ -112,6 +130,9 @@ public:
 		}
 	}
 private:
-	Children* children;
+	Quadtree* topLeft;
+	Quadtree* topRight;
+	Quadtree* bottomLeft;
+	Quadtree* bottomRight;
 };
 

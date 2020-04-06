@@ -28,7 +28,7 @@ void insertIntoQuadtree(GISDataEntry dataEntry, Quadtree& quadtree, int offset) 
 
 		if (!wasAddedToExistingDataSet) { // if we can't
 			if (quadtree.dataSets.size() == quadtree.K) { // if we already have K data points
-				if (quadtree.getChildren()->size() == 0) { // if node hasn't already been partitioned
+				if (!quadtree.isPartitioned) { // if node hasn't already been partitioned
 					// create quadtree children
 					float top = quadtree.area.maxLat;
 					float bottom = quadtree.area.minLat;
@@ -63,10 +63,15 @@ void insertIntoQuadtree(GISDataEntry dataEntry, Quadtree& quadtree, int offset) 
 					}
 
 					// add the children to this node.
+					topLeft.parent = &quadtree;
 					quadtree.setChild(0, topLeft);
+					topRight.parent = &quadtree;
 					quadtree.setChild(1, topRight);
+					bottomLeft.parent = &quadtree;
 					quadtree.setChild(2, bottomLeft);
+					bottomRight.parent = &quadtree;
 					quadtree.setChild(3, bottomRight);
+					quadtree.isPartitioned = true;
 				}
 
 				// insert entry into a child node
@@ -80,7 +85,6 @@ void insertIntoQuadtree(GISDataEntry dataEntry, Quadtree& quadtree, int offset) 
 					Quadtree bottomRight = quadtree.getChild(3);
 					insertIntoQuadtree(dataEntry, bottomRight, offset);
 				}
-
 			}
 			else { // if there's room, create a new dataset
 				DataSet newDataSet(dataEntry.PRIM_LAT_DEC, dataEntry.PRIM_LONG_DEC);
@@ -93,17 +97,9 @@ void insertIntoQuadtree(GISDataEntry dataEntry, Quadtree& quadtree, int offset) 
 
 int main()
 {
-	//Part 1: Importing new GIS records into the database le
-	/*ofstream importFile;
-	importFile.open("New_GIS.txt", ofstream::app);
-	//importFile << "FEATURE_ID|FEATURE_NAME|FEATURE_CLASS|STATE_ALPHA|STATE_NUMERIC|COUNTY_NAME|COUNTY_NUMERIC|PRIMARY_LAT_DMS|PRIM_LONG_DMS|PRIM_LAT_DEC|PRIM_LONG_DEC|SOURCE_LAT_DMS|SOURCE_LONG_DMS|SOURCE_LAT_DEC|SOURCE_LONG_DEC|ELEV_IN_M|ELEV_IN_FT|MAP_NAME|DATE_CREATED|DATE_EDITED.\n";
-	importFile << "401|Aguaje Draw|Valley|AZ|04|Apache|001|343417N|1091313W|34.5714281|-109.2203696|344308N|1085826W|34.7188|-108.9739|1750|5741|Kearn Lake|02/08/1980|01/14/2008.\n";
-	importFile.close();*/
-
-	// put records in a vector off our GISDataEntry class
 	vector<GISDataEntry> data;
 	string line;
-	ifstream outputFile("New_GIS.txt");
+	ifstream outputFile("VA_Monterey.txt");
 	Hashtable<string> hashtable = Hashtable<string>();
 	float maxLat = 90;
 	float minLat = -90;
@@ -119,7 +115,7 @@ int main()
 			if (offset != 0) {
 				GISDataEntry dataEntry(line);
 				data.push_back(dataEntry);
-				string key = dataEntry.COUNTY_NAME + dataEntry.STATE_ALPHA;
+				string key = dataEntry.FEATURE_NAME + ' ' + dataEntry.STATE_ALPHA;
 				hashtable.insert(key, offset);
 
 				insertIntoQuadtree(dataEntry, quadtree, offset);
@@ -127,13 +123,14 @@ int main()
 			offset++;
 		}
 	}
+	outputFile.close();
 
 	queue<tuple<string, string, float, float, vector<int>>> buffer;
 
 	//Part 2: Retrieving data for all GIS records matching given geographic coordinates
-	float latitude = 34.5714281;
-	float longitude = -109.2203696;
-	if (latitude != get<2>(buffer.back()) || longitude != get<3>(buffer.back())) {
+	float latitude = 38.4353981;
+	float longitude = -79.5533807;
+	if (buffer.size() == 0 || latitude != get<2>(buffer.back()) || longitude != get<3>(buffer.back())) {
 		if (buffer.size() == 15) {
 			buffer.pop();
 		}
@@ -142,7 +139,8 @@ int main()
 			tuple<string, string, float, float, vector<int>> newData("", "", latitude, longitude, offsets);
 			buffer.push(newData);
 			for (int i = 0; i < offsets.size(); i++) {
-				data[get<4>(buffer.back())[i]].print();
+				int offset = get<4>(buffer.back())[i];
+				data[offset - 1].print();
 			}
 		}
 		else {
@@ -151,7 +149,8 @@ int main()
 	}
 	else {
 		for (int i = 0; i < get<4>(buffer.back()).size(); i++) {
-			data[get<4>(buffer.back())[i]].print();
+			int offset = get<4>(buffer.back())[i];
+			data[offset - 1].print();
 		}
 	}
 
@@ -160,16 +159,17 @@ int main()
 	string state = "AZ";
 
 
-	if (featureName != get<0>(buffer.back()) || state != get<1>(buffer.back())) {
+	if (buffer.size() == 0 || featureName != get<0>(buffer.back()) || state != get<1>(buffer.back())) {
 		if (buffer.size() == 15) {
 			buffer.pop();
 		}
-		vector<int> offsets = hashtable.search(featureName + state);
+		vector<int> offsets = hashtable.search(featureName + ' ' + state);
 		if (offsets.size()>0) {
 			tuple<string, string, float, float, vector<int>> newData(featureName, state, -1, -1, offsets);
 			buffer.push(newData);
 			for (int i = 0; i < offsets.size(); i++) {
-				data[get<4>(buffer.back())[i]].print();
+				int offset = get<4>(buffer.back())[i];
+				data[offset - 1].print();
 			}
 		}
 		else {
@@ -178,7 +178,8 @@ int main()
 	}
 	else {
 		for (int i = 0; i < get<4>(buffer.back()).size(); i++) {
-			data[get<4>(buffer.back())[i]].print();
+			int offset = get<4>(buffer.back())[i];
+			data[offset - 1].print();
 		}
 	}
 
@@ -188,7 +189,7 @@ int main()
 	longitude = -109.2203696;
 	float halfHeight = 20;
 	float halfWidth = 20;
-	if (latitude != get<2>(buffer.back()) || longitude != get<3>(buffer.back())) {
+	if (buffer.size() == 0 || latitude != get<2>(buffer.back()) || longitude != get<3>(buffer.back())) {
 		if (buffer.size() == 15) {
 			buffer.pop();
 		}
@@ -197,7 +198,8 @@ int main()
 			tuple<string, string, float, float, vector<int>> newData("", "", latitude, longitude, offsets);
 			buffer.push(newData);
 			for (int i = 0; i < offsets.size(); i++) {
-				data[get<4>(buffer.back())[i]].print();
+				int offset = get<4>(buffer.back())[i];
+				data[offset - 1].print();
 			}
 		}
 		else {
@@ -206,12 +208,15 @@ int main()
 	}
 	else {
 		for (int i = 0; i < get<4>(buffer.back()).size(); i++) {
-			data[get<4>(buffer.back())[i]].print();
+			int offset = get<4>(buffer.back())[i];
+			data[offset - 1].print();
 		}
 	}
 	
 	//Part 5: Displaying the in-memory indices in a human-readable manner
 	hashtable.print();
 	quadtree.print();
+
+	return 0;
 }
 

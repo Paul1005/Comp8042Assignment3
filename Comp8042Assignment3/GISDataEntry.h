@@ -4,90 +4,208 @@
 using namespace std;
 #pragma once
 class GISDataEntry
-{ //401|Aguaje Draw|Valley|AZ|04|Apache|001|343417N|1091313W|34.5714281|-109.2203696|344308N|1085826W|34.7188|-108.9739|1750|5741|Kearn Lake|02/08/1980|01/14/2008.
+{ 
 public:
 	GISDataEntry(string line) {
 		char delimiter = '|';
-		//int numOfDelims = 19;
 
 		int currentPosition = line.find(delimiter);
-		FEATURE_ID = stoi(line.substr(0, currentPosition));
+		if (currentPosition == 0) {
+			FEATURE_ID = NULL;
+		}
+		else {
+			FEATURE_ID = stoi(line.substr(0, currentPosition));
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		FEATURE_NAME = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			FEATURE_NAME = "";
+		}
+		else {
+			FEATURE_NAME = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		FEATURE_CLASS = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			FEATURE_CLASS = "";
+		}
+		else {
+			FEATURE_CLASS = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		STATE_ALPHA = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			STATE_ALPHA = "";
+		}
+		else {
+			STATE_ALPHA = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		STATE_NUMERIC = stoi(line.substr(0, currentPosition));
+		if (currentPosition == 0) {
+			STATE_NUMERIC = NULL;
+		}
+		else {
+			STATE_NUMERIC = stoi(line.substr(0, currentPosition));
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		COUNTY_NAME = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			COUNTY_NAME = "";
+		}
+		else {
+			COUNTY_NAME = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		COUNTY_NUMERIC = stoi(line.substr(0, currentPosition));
+		if (currentPosition == 0) {
+			COUNTY_NUMERIC = NULL;
+		}
+		else {
+			COUNTY_NUMERIC = stoi(line.substr(0, currentPosition));
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		PRIMARY_LAT_DMS = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			PRIMARY_LAT_DMS = "";
+		}
+		else {
+			PRIMARY_LAT_DMS = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		PRIM_LONG_DMS = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			PRIM_LONG_DMS = "";
+		}
+		else {
+			PRIM_LONG_DMS = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		PRIM_LAT_DEC = stoi(line.substr(0, currentPosition));
+		if (currentPosition == 0) {
+			PRIM_LAT_DEC = NULL;
+		}
+		else {
+			PRIM_LAT_DEC = stof(line.substr(0, currentPosition));
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		PRIM_LONG_DEC = stoi(line.substr(0, currentPosition));
+		if (currentPosition == 0) {
+			PRIM_LONG_DEC = NULL;
+		}
+		else {
+			PRIM_LONG_DEC = stof(line.substr(0, currentPosition));
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		SOURCE_LAT_DMS = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			SOURCE_LAT_DMS = "";
+		}
+		else {
+			SOURCE_LAT_DMS = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		SOURCE_LONG_DMS = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			SOURCE_LONG_DMS = "";
+		}
+		else {
+			SOURCE_LONG_DMS = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		SOURCE_LAT_DEC = stoi(line.substr(0, currentPosition));
+		if (currentPosition == 0) {
+			SOURCE_LAT_DEC = NULL;
+		}
+		else {
+			SOURCE_LAT_DEC = stof(line.substr(0, currentPosition));
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		SOURCE_LONG_DEC = stoi(line.substr(0, currentPosition));
+		if (currentPosition == 0) {
+			SOURCE_LONG_DEC = NULL;
+		}
+		else {
+			SOURCE_LONG_DEC = stof(line.substr(0, currentPosition));
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		ELEV_IN_M = stoi(line.substr(0, currentPosition));
+		if (currentPosition == 0) {
+			ELEV_IN_M = NULL;
+		}
+		else {
+			ELEV_IN_M = stoi(line.substr(0, currentPosition));
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		ELEV_IN_FT = stoi(line.substr(0, currentPosition));
+		if (currentPosition == 0) {
+			ELEV_IN_FT = NULL;
+		}
+		else {
+			ELEV_IN_FT = stoi(line.substr(0, currentPosition));
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		MAP_NAME = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			MAP_NAME = "";
+		}
+		else {
+			MAP_NAME = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		DATE_CREATED = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			DATE_CREATED = "";
+		}
+		else {
+			DATE_CREATED = line.substr(0, currentPosition);
+		}
 
 		line = line.substr(currentPosition + 1);
+
 		currentPosition = line.find(delimiter);
-		DATE_EDITED = line.substr(0, currentPosition);
+		if (currentPosition == 0) {
+			DATE_EDITED = "";
+		}
+		else {
+			DATE_EDITED = line.substr(0, currentPosition);
+		}
 	}
 
 	int FEATURE_ID;

@@ -98,9 +98,10 @@ public:
 		unsigned int i = 0;
 		unsigned int hi = h;
 		while (status[hi] == OCCUPIED) {
-			if (buckets[hi] == key)
+			if (buckets[hi] == key) {
 				offsets[hi].push_back(offset);
-			return false; // Key already exists
+				return true;
+			}
 			numCollisions++;
 			++i;
 			hi = (h + hash(i)) % c;

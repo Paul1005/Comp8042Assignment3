@@ -38,19 +38,19 @@ public:
 
 	}
 
-	void setChild(int index, Quadtree node)
+	void setChild(int index, Quadtree* node)
 	{
 		if (index == 0) {
-			topLeft = &node;
+			topLeft = node;
 		}
 		else if (index == 1) {
-			topRight = &node;
+			topRight = node;
 		}
 		else if (index == 2) {
-			bottomLeft = &node;
+			bottomLeft = node;
 		}
 		else if (index == 3) {
-			bottomRight = &node;
+			bottomRight = node;
 		}
 	}
 

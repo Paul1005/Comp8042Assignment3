@@ -33,10 +33,18 @@ class Hashtable {
 
 		K* newBuckets = new K[c];
 		BucketStatus* newStatus = new BucketStatus[c];
+		for (int i = 0; i < c; i++)
+		{
+			newStatus[i] = EMPTY;
+		}
 		vector<int>* newOffsets = new vector<int>[c];
 
 		K* tempBuckets = new K[c];
 		BucketStatus* tempStatus = new BucketStatus[c];
+		for (int i = 0; i < c; i++)
+		{
+			tempStatus[i] = EMPTY;
+		}
 		vector<int>* tempOffsets = new vector<int>[c];
 
 		tempBuckets = buckets;
@@ -63,6 +71,10 @@ public:
 		c = 1024;
 		buckets = new K[c];
 		status = new BucketStatus[c];
+		for (int i = 0; i < c; i++)
+		{
+			status[i] = EMPTY;
+		}
 		offsets = new vector<int>[c];
 
 		size = 0;
@@ -104,7 +116,7 @@ public:
 			}
 			numCollisions++;
 			++i;
-			hi = (h % c) + hash(i);
+			hi = (h + hash(i)) % c;
 		}
 		status[hi] = OCCUPIED;
 		buckets[hi] = key;
@@ -124,7 +136,7 @@ public:
 			}
 			numCollisions++;
 			++i;
-			hi = (h % c) + hash(i);
+			hi = (h + hash(i)) % c;
 		}
 		// Key not found. Hit an empty bucket.
 		vector<int> v;
@@ -144,7 +156,7 @@ public:
 			}
 			numCollisions++;
 			++i;
-			hi = (h % c) + hash(i);
+			hi = (h + hash(i)) % c;
 		}
 		// Key not found an hit an empty bucket.
 		return false;

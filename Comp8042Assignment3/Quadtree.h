@@ -25,7 +25,7 @@ public:
 	}
 
 	void insert(GISDataEntry dataEntry, int offset) {
-		if (dataEntry.PRIM_LAT_DEC < area.maxLat && dataEntry.PRIM_LAT_DEC > area.minLat && dataEntry.PRIM_LONG_DEC <area.maxLong && dataEntry.PRIM_LONG_DEC > area.minLong) { // if it fits in the designated area
+		if (dataEntry.PRIM_LAT_DEC < area.getMaxLat() && dataEntry.PRIM_LAT_DEC > area.getMinLat() && dataEntry.PRIM_LONG_DEC < area.getMaxLong() && dataEntry.PRIM_LONG_DEC > area.getMinLong()) { // if it fits in the designated area
 			bool wasAddedToExistingDataSet = false;
 			for (int i = 0; i < dataSets.size(); i++) { // see if we can add it to an existing data point
 				if (dataSets[i].coordinate.first == dataEntry.PRIM_LAT_DEC && dataSets[i].coordinate.second == dataEntry.PRIM_LONG_DEC) {
@@ -39,16 +39,10 @@ public:
 				if (dataSets.size() == K) { // if we already have K data points
 					if (!isPartitioned) { // if node hasn't already been partitioned
 						// create quadtree children
-						float top = area.maxLat;
-						float bottom = area.minLat;
-						float left = area.minLong;
-						float right = area.maxLong;
-
-						cout << "Top: " << top << endl;
-						cout << "Bottom: " << bottom << endl;
-						cout << "Left: " << left << endl;
-						cout << "Right: " << right << endl;
-						cout << endl;
+						float top = area.getMaxLat();
+						float bottom = area.getMinLat();
+						float left = area.getMinLong();
+						float right = area.getMaxLong();
 
 						float horizontalMiddle = (top + bottom) / 2;
 						float verticalMiddle = (left + right) / 2;
@@ -66,16 +60,16 @@ public:
 						bottomRight = new Quadtree(4, bottomRightRectangle);
 
 						for (int i = 0; i < dataSets.size(); i++) { // insert each of our old datasets into the children
-							if (dataSets[i].coordinate.first < topLeftRectangle.maxLat && dataSets[i].coordinate.first > topLeftRectangle.minLat&& dataSets[i].coordinate.second <topLeftRectangle.maxLong && dataSets[i].coordinate.second > topLeftRectangle.minLong) {
+							if (dataSets[i].coordinate.first < topLeftRectangle.getMaxLat() && dataSets[i].coordinate.first > topLeftRectangle.getMinLat() && dataSets[i].coordinate.second < topLeftRectangle.getMaxLong() && dataSets[i].coordinate.second > topLeftRectangle.getMinLong()) {
 								topLeft->addDataSet(dataSets[i]);
 							}
-							else if (dataSets[i].coordinate.first < topRightRectangle.maxLat && dataSets[i].coordinate.first > topRightRectangle.minLat&& dataSets[i].coordinate.second <topRightRectangle.maxLong && dataSets[i].coordinate.second > topRightRectangle.minLong) {
+							else if (dataSets[i].coordinate.first < topRightRectangle.getMaxLat() && dataSets[i].coordinate.first > topRightRectangle.getMinLat() && dataSets[i].coordinate.second < topRightRectangle.getMaxLong() && dataSets[i].coordinate.second > topRightRectangle.getMinLong()) {
 								topRight->addDataSet(dataSets[i]);
 							}
-							else if (dataSets[i].coordinate.first < bottomLeftRectangle.maxLat && dataSets[i].coordinate.first > bottomLeftRectangle.minLat&& dataSets[i].coordinate.second <bottomLeftRectangle.maxLong && dataSets[i].coordinate.second > bottomLeftRectangle.minLong) {
+							else if (dataSets[i].coordinate.first < bottomLeftRectangle.getMaxLat() && dataSets[i].coordinate.first > bottomLeftRectangle.getMinLat() && dataSets[i].coordinate.second < bottomLeftRectangle.getMaxLong() && dataSets[i].coordinate.second > bottomLeftRectangle.getMinLong()) {
 								bottomLeft->addDataSet(dataSets[i]);
 							}
-							else if (dataSets[i].coordinate.first < bottomRightRectangle.maxLat && dataSets[i].coordinate.first > bottomRightRectangle.minLat&& dataSets[i].coordinate.second <bottomRightRectangle.maxLong && dataSets[i].coordinate.second > bottomRightRectangle.minLong) {
+							else if (dataSets[i].coordinate.first < bottomRightRectangle.getMaxLat() && dataSets[i].coordinate.first > bottomRightRectangle.getMinLat() && dataSets[i].coordinate.second < bottomRightRectangle.getMaxLong() && dataSets[i].coordinate.second > bottomRightRectangle.getMinLong()) {
 								bottomRight->addDataSet(dataSets[i]);
 							}
 						}
@@ -113,27 +107,27 @@ public:
 
 	}
 
-	Quadtree getChild(int index)
+	Quadtree* getChild(int index)
 	{
 		if (index == 0) {
-			return *topLeft;
+			return topLeft;
 		}
 		else if (index == 1) {
-			return *topRight;
+			return topRight;
 		}
 		else if (index == 2) {
-			return *bottomLeft;
+			return bottomLeft;
 		}
 		else if (index == 3) {
-			return *bottomRight;
+			return bottomRight;
 		}
 	}
 
 	vector<int> find(float latitude, float longitude) {
 		if (isPartitioned) {
 			for (int i = 0; i < 4; i++) {
-				if (latitude < getChild(i).area.maxLat && latitude > getChild(i).area.minLat&& longitude < getChild(i).area.maxLong && longitude > getChild(i).area.minLong) {
-					return getChild(i).find(latitude, longitude);
+				if (latitude < getChild(i)->area.getMaxLat() && latitude > getChild(i)->area.getMinLat() && longitude < getChild(i)->area.getMaxLong() && longitude > getChild(i)->area.getMinLong()) {
+					return getChild(i)->find(latitude, longitude);
 				}
 			}
 		}
@@ -152,11 +146,11 @@ public:
 		vector<int> offsets;
 		if (isPartitioned) {
 			for (int i = 0; i < 4; i++) {
-				if ((latitude + halfHeight > getChild(i).area.minLat&& longitude + halfWidth > getChild(i).area.minLong) ||
-					(latitude + halfHeight > getChild(i).area.minLat&& longitude - halfWidth < getChild(i).area.maxLat) ||
-					(latitude - halfHeight < getChild(i).area.maxLat && longitude + halfWidth > getChild(i).area.minLong) ||
-					(latitude - halfHeight < getChild(i).area.maxLat && longitude - halfWidth > getChild(i).area.maxLat)) {
-					vector<int> results = getChild(i).find(latitude, longitude, halfHeight, halfWidth);
+				if ((latitude + halfHeight > getChild(i)->area.getMinLat()&& longitude + halfWidth > getChild(i)->area.getMinLong()) ||
+					(latitude + halfHeight > getChild(i)->area.getMinLat() && longitude - halfWidth < getChild(i)->area.getMaxLat()) ||
+					(latitude - halfHeight < getChild(i)->area.getMinLat() && longitude + halfWidth > getChild(i)->area.getMinLong()) ||
+					(latitude - halfHeight < getChild(i)->area.getMinLat() && longitude - halfWidth > getChild(i)->area.getMaxLat())) {
+					vector<int> results = getChild(i)->find(latitude, longitude, halfHeight, halfWidth);
 					offsets.insert(offsets.end(), results.begin(), results.end());
 				}
 			}
@@ -174,17 +168,18 @@ public:
 	void print() {
 		if (isPartitioned) {
 			for (int i = 0; i < 4; i++) {
-				getChild(i).print();
+				getChild(i)->print();
 			}
 		}
 		else {
 			for (DataSet dataSet : dataSets) {
-				cout << "latitude: " << dataSet.coordinate.first;
-				cout << "longitude: " << dataSet.coordinate.second;
-				cout << "file offsets:";
+				cout << "latitude: " << dataSet.coordinate.first << endl;;
+				cout << "longitude: " << dataSet.coordinate.second << endl;;
+				cout << "file offsets:" << endl;
 				for (int offset : dataSet.offsets) {
-					cout << offset;
+					cout << offset << endl;;
 				}
+				cout << endl;
 			}
 		}
 	}

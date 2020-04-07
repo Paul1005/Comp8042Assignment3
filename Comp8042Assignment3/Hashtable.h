@@ -136,7 +136,7 @@ public:
 		unsigned int i = 0;
 		unsigned int hi = h;
 		while (status[hi] != EMPTY) {
-			if (buckets[hi] == OCCUPIED && buckets[hi] == key) {
+			if (status[hi] == OCCUPIED && buckets[hi] == key) {
 				// Key found, delete it.
 				status[hi] = DELETED;
 				size--;
@@ -160,10 +160,14 @@ public:
 
 	void print() {
 		for (int i = 0; i < c; i++) {
-			cout << "feature name and state: " << buckets[i];
-			cout << "file offsets:";
-			for (int j = 0; j < offsets[i].size(); j++) {
-				cout << offsets[i][j];
+			if (status[i] == OCCUPIED) {
+				cout << "feature name and state: " << buckets[i] << endl;
+				cout << "file offsets:" << endl;
+				for (int j = 0; j < offsets[i].size(); j++) {
+					cout << offsets[i][j];
+					cout << endl;
+				}
+				cout << endl;
 			}
 		}
 	}

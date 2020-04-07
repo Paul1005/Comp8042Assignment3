@@ -13,6 +13,23 @@ public:
 		minLong = left;
 	}
 
+	float getMaxLat() {
+		return maxLat;
+	}
+
+	float getMinLat() {
+		return minLat;
+	}
+
+	float getMaxLong() {
+		return maxLong;
+	}
+
+	float getMinLong() {
+		return minLong;
+	}
+
+private:
 	float maxLat;
 	float minLat;
 	float maxLong;

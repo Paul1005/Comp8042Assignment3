@@ -21,10 +21,10 @@ int main()
 	string line;
 	ifstream outputFile("VA_Monterey.txt");
 	Hashtable<string> hashtable = Hashtable<string>();
-	float maxLat = 90;
-	float minLat = -90;
-	float maxLong = 180;
-	float minLong = -180;
+	float maxLat = 38.6;
+	float minLat = 38.4;
+	float maxLong = -79.4;
+	float minLong = -79.6;
 	Rectangle rect1 = Rectangle(maxLat, minLat, maxLong, minLong);
 	Quadtree quadtree = Quadtree(4, rect1);
 	if (outputFile.is_open())
@@ -74,8 +74,8 @@ int main()
 	}
 
 	//Part 3: Retrieving data for all GIS records matching a given feature name and state
-	string featureName = "Aguaje Draw";
-	string state = "AZ";
+	string featureName = "Asbury Church";
+	string state = "VA";
 
 
 	if (buffer.size() == 0 || featureName != get<0>(buffer.back()) || state != get<1>(buffer.back())) {
@@ -104,8 +104,8 @@ int main()
 
 
 	//Part 4: Retrieving data for all GIS records that fall within a given (rectangular) geographic region centered on a geographic coordinate
-	latitude = 34.5714281;
-	longitude = -109.2203696;
+	latitude = 38.4353981;
+	longitude = -79.5533807;
 	float halfHeight = 20;
 	float halfWidth = 20;
 	if (buffer.size() == 0 || latitude != get<2>(buffer.back()) || longitude != get<3>(buffer.back())) {
@@ -133,7 +133,7 @@ int main()
 	}
 	
 	//Part 5: Displaying the in-memory indices in a human-readable manner
-	hashtable.print();
+	//hashtable.print();
 	quadtree.print();
 
 	return 0;

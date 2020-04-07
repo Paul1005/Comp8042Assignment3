@@ -104,7 +104,7 @@ public:
 			}
 			numCollisions++;
 			++i;
-			hi = (h + hash(i)) % c;
+			hi = (h % c) + hash(i);
 		}
 		status[hi] = OCCUPIED;
 		buckets[hi] = key;
@@ -124,7 +124,7 @@ public:
 			}
 			numCollisions++;
 			++i;
-			hi = (h + hash(i)) % c;
+			hi = (h % c) + hash(i);
 		}
 		// Key not found. Hit an empty bucket.
 		vector<int> v;
@@ -144,7 +144,7 @@ public:
 			}
 			numCollisions++;
 			++i;
-			hi = (h + hash(i)) % c;
+			hi = (h % c) + hash(i);
 		}
 		// Key not found an hit an empty bucket.
 		return false;

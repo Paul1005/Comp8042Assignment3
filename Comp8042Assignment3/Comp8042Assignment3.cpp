@@ -63,7 +63,7 @@ int main()
 			}
 		}
 		else {
-			cout << "not found";
+			cout << "not found" << endl;
 		}
 	}
 	else {
@@ -92,7 +92,7 @@ int main()
 			}
 		}
 		else {
-			cout << "not found";
+			cout << "not found" << endl;
 		}
 	}
 	else {
@@ -122,7 +122,7 @@ int main()
 			}
 		}
 		else {
-			cout << "not found";
+			cout << "not found" << endl;
 		}
 	}
 	else {

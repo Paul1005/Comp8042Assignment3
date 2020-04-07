@@ -25,7 +25,10 @@ public:
 	}
 
 	void insert(GISDataEntry dataEntry, int offset) {
-		if (dataEntry.PRIM_LAT_DEC < area.getMaxLat() && dataEntry.PRIM_LAT_DEC > area.getMinLat() && dataEntry.PRIM_LONG_DEC < area.getMaxLong() && dataEntry.PRIM_LONG_DEC > area.getMinLong()) { // if it fits in the designated area
+		if (dataEntry.PRIM_LAT_DEC < area.getMaxLat() && 
+			dataEntry.PRIM_LAT_DEC > area.getMinLat() && 
+			dataEntry.PRIM_LONG_DEC < area.getMaxLong() && 
+			dataEntry.PRIM_LONG_DEC > area.getMinLong()) { // if it fits in the designated area
 			bool wasAddedToExistingDataSet = false;
 			for (int i = 0; i < dataSets.size(); i++) { // see if we can add it to an existing data point
 				if (dataSets[i].coordinate.first == dataEntry.PRIM_LAT_DEC && dataSets[i].coordinate.second == dataEntry.PRIM_LONG_DEC) {
@@ -60,16 +63,28 @@ public:
 						bottomRight = new Quadtree(4, bottomRightRectangle);
 
 						for (int i = 0; i < dataSets.size(); i++) { // insert each of our old datasets into the children
-							if (dataSets[i].coordinate.first < topLeftRectangle.getMaxLat() && dataSets[i].coordinate.first > topLeftRectangle.getMinLat() && dataSets[i].coordinate.second < topLeftRectangle.getMaxLong() && dataSets[i].coordinate.second > topLeftRectangle.getMinLong()) {
+							if (dataSets[i].coordinate.first < topLeftRectangle.getMaxLat() && 
+								dataSets[i].coordinate.first > topLeftRectangle.getMinLat() && 
+								dataSets[i].coordinate.second < topLeftRectangle.getMaxLong() && 
+								dataSets[i].coordinate.second > topLeftRectangle.getMinLong()) {
 								topLeft->addDataSet(dataSets[i]);
 							}
-							else if (dataSets[i].coordinate.first < topRightRectangle.getMaxLat() && dataSets[i].coordinate.first > topRightRectangle.getMinLat() && dataSets[i].coordinate.second < topRightRectangle.getMaxLong() && dataSets[i].coordinate.second > topRightRectangle.getMinLong()) {
+							else if (dataSets[i].coordinate.first < topRightRectangle.getMaxLat() && 
+								dataSets[i].coordinate.first > topRightRectangle.getMinLat() && 
+								dataSets[i].coordinate.second < topRightRectangle.getMaxLong() && 
+								dataSets[i].coordinate.second > topRightRectangle.getMinLong()) {
 								topRight->addDataSet(dataSets[i]);
 							}
-							else if (dataSets[i].coordinate.first < bottomLeftRectangle.getMaxLat() && dataSets[i].coordinate.first > bottomLeftRectangle.getMinLat() && dataSets[i].coordinate.second < bottomLeftRectangle.getMaxLong() && dataSets[i].coordinate.second > bottomLeftRectangle.getMinLong()) {
+							else if (dataSets[i].coordinate.first < bottomLeftRectangle.getMaxLat() && 
+								dataSets[i].coordinate.first > bottomLeftRectangle.getMinLat() && 
+								dataSets[i].coordinate.second < bottomLeftRectangle.getMaxLong() && 
+								dataSets[i].coordinate.second > bottomLeftRectangle.getMinLong()) {
 								bottomLeft->addDataSet(dataSets[i]);
 							}
-							else if (dataSets[i].coordinate.first < bottomRightRectangle.getMaxLat() && dataSets[i].coordinate.first > bottomRightRectangle.getMinLat() && dataSets[i].coordinate.second < bottomRightRectangle.getMaxLong() && dataSets[i].coordinate.second > bottomRightRectangle.getMinLong()) {
+							else if (dataSets[i].coordinate.first < bottomRightRectangle.getMaxLat() && 
+								dataSets[i].coordinate.first > bottomRightRectangle.getMinLat() && 
+								dataSets[i].coordinate.second < bottomRightRectangle.getMaxLong() && 
+								dataSets[i].coordinate.second > bottomRightRectangle.getMinLong()) {
 								bottomRight->addDataSet(dataSets[i]);
 							}
 						}
@@ -80,12 +95,10 @@ public:
 					}
 
 					// insert entry into a child node
-					for (int i = 0; i < dataSets.size(); i++) {
-						topLeft->insert(dataEntry, offset);
-						topRight->insert(dataEntry, offset);
-						bottomLeft->insert(dataEntry, offset);
-						bottomRight->insert(dataEntry, offset);
-					}
+					topLeft->insert(dataEntry, offset);
+					topRight->insert(dataEntry, offset);
+					bottomLeft->insert(dataEntry, offset);
+					bottomRight->insert(dataEntry, offset);
 				}
 				else { // if there's room, create a new dataset
 					DataSet newDataSet(dataEntry.PRIM_LAT_DEC, dataEntry.PRIM_LONG_DEC);
@@ -146,7 +159,7 @@ public:
 		vector<int> offsets;
 		if (isPartitioned) {
 			for (int i = 0; i < 4; i++) {
-				if ((latitude + halfHeight > getChild(i)->area.getMinLat()&& longitude + halfWidth > getChild(i)->area.getMinLong()) ||
+				if ((latitude + halfHeight > getChild(i)->area.getMinLat() && longitude + halfWidth > getChild(i)->area.getMinLong()) ||
 					(latitude + halfHeight > getChild(i)->area.getMinLat() && longitude - halfWidth < getChild(i)->area.getMaxLat()) ||
 					(latitude - halfHeight < getChild(i)->area.getMinLat() && longitude + halfWidth > getChild(i)->area.getMinLong()) ||
 					(latitude - halfHeight < getChild(i)->area.getMinLat() && longitude - halfWidth > getChild(i)->area.getMaxLat())) {

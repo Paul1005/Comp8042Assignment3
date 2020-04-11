@@ -191,13 +191,13 @@ int main()
 				else if (command == "what_is") {
 					featureName = splitLine[1];
 					state = splitLine[2];
-					if (buffer.size() == 0 || latitude != get<2>(buffer.back()) || longitude != get<3>(buffer.back())) {
+					if (buffer.size() == 0 || featureName != get<0>(buffer.back()) || state != get<1>(buffer.back())) {
 						if (buffer.size() == 15) {
 							buffer.pop();
 						}
-						vector<int> offsets = quadtree.find(latitude, longitude);
+						vector<int> offsets = hashtable.search(featureName + ' ' + state);
 						if (offsets.size() > 0) {
-							tuple<string, string, float, float, vector<int>> newData("", "", latitude, longitude, offsets);
+							tuple<string, string, float, float, vector<int>> newData(featureName, state, -1, -1, offsets);
 							buffer.push(newData);
 							for (int i = 0; i < offsets.size(); i++) {
 								int offset = get<4>(buffer.back())[i];

@@ -39,7 +39,7 @@ vector<std::string> split(string strToSplit, char delimeter)
 int main()
 {
 	string databaseFileName = "db.txt";
-	string commandScriptFileName = "Script01.txt";
+	string commandScriptFileName = "DemoScript01.txt";
 	string logFileName = "Log01.txt";
 	string recordFileName = "NM_All.txt";
 
@@ -84,11 +84,11 @@ int main()
 					Rectangle rect1 = Rectangle(maxLat, minLat, maxLong, minLong);
 					quadtree = Quadtree(4, rect1);
 
-					logFile << "; ";
-					logFile << line;
+					logFile << line << endl;
 					logFile << endl;
-					logFile << "GIS Program";
+					logFile << "GIS Program" << endl;
 					logFile << endl;
+					logFile << "dbFile:\t\t" << databaseFileName << endl;
 					logFile << "script:\t\t" << commandScriptFileName << endl;
 					logFile << "log:\t\t" << logFileName << endl;
 					logFile << "Start time: " << time << endl;
@@ -105,7 +105,7 @@ int main()
 						while (getline(recordFile, line))
 						{
 							if (offset != 0) {
-								importDatabaseFile << line;
+								importDatabaseFile << line << endl;
 							}
 							offset++;
 						}
@@ -127,7 +127,7 @@ int main()
 						}
 					}
 					exportDatabaseFile.close();
-					cout << "Command" << commandNum << ":" << line;
+					cout << "Command" << commandNum << ":" << line << endl;
 					commandNum++;
 				}
 				else if (command == "debug") {
@@ -152,7 +152,7 @@ int main()
 							printbuffer.pop();
 						}
 					}
-					cout << "Command" << commandNum << ":" << line;
+					cout << "Command" << commandNum << ":" << line << endl;
 					commandNum++;
 				}
 				else if (command == "quit") {
@@ -185,7 +185,7 @@ int main()
 							data[offset - 1].print();
 						}
 					}
-					cout << "Command" << commandNum << ":" << line;
+					cout << "Command" << commandNum << ":" << line << endl;
 					commandNum++;
 				}
 				else if (command == "what_is") {
@@ -245,7 +245,7 @@ int main()
 							data[offset - 1].print();
 						}
 					}
-					cout << "Command" << commandNum << ":" << line;
+					cout << "Command" << commandNum << ":" << line << endl;
 					commandNum++;
 				}
 			}

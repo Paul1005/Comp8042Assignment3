@@ -47,7 +47,7 @@ int main()
 	logFile.open(logFileName);
 
 	vector<GISDataEntry> data;
-	string line;
+	string scriptLine;
 	ifstream commandScriptFile(commandScriptFileName);
 	float maxLat;
 	float minLat;
@@ -66,13 +66,13 @@ int main()
 	if (commandScriptFile.is_open())
 	{
 		int commandNum = 1;
-		while (getline(commandScriptFile, line))
+		while (getline(commandScriptFile, scriptLine))
 		{
 			if (lineNumber == 1 || lineNumber == 2 || lineNumber == 3) {
-				logFile << line << endl;
+				logFile << scriptLine << endl;
 			}
-			if (line[0] != ';') {
-				vector<string> splitLine = split(line, '\t');
+			if (scriptLine[0] != ';') {
+				vector<string> splitLine = split(scriptLine, '\t');
 				string command = splitLine[0];
 
 				if (command == "world") {
@@ -84,7 +84,7 @@ int main()
 					Rectangle rect1 = Rectangle(maxLat, minLat, maxLong, minLong);
 					quadtree = Quadtree(4, rect1);
 
-					logFile << line << endl;
+					logFile << scriptLine << endl;
 					logFile << endl;
 					logFile << "GIS Program" << endl;
 					logFile << endl;
@@ -99,13 +99,14 @@ int main()
 					ofstream importDatabaseFile(databaseFileName);
 					recordFileName = splitLine[1];
 					ifstream recordFile(recordFileName);
+					string recordLine;
 					if (recordFile.is_open())
 					{
 						int offset = 0;
-						while (getline(recordFile, line))
+						while (getline(recordFile, recordLine))
 						{
 							if (offset != 0) {
-								importDatabaseFile << line << endl;
+								importDatabaseFile << recordLine << endl;
 							}
 							offset++;
 						}
@@ -113,12 +114,13 @@ int main()
 					recordFile.close();
 
 					ifstream exportDatabaseFile(databaseFileName);
+					string databaseLine;
 					if (exportDatabaseFile.is_open())
 					{
 						int offset = 0;
-						while (getline(exportDatabaseFile, line))
+						while (getline(exportDatabaseFile, databaseLine))
 						{
-							GISDataEntry dataEntry(line);
+							GISDataEntry dataEntry(databaseLine);
 							data.push_back(dataEntry);
 							string key = dataEntry.FEATURE_NAME + ' ' + dataEntry.STATE_ALPHA;
 							hashtable.insert(key, offset);
@@ -127,7 +129,7 @@ int main()
 						}
 					}
 					exportDatabaseFile.close();
-					cout << "Command" << commandNum << ":" << line << endl;
+					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					commandNum++;
 				}
 				else if (command == "debug") {
@@ -152,10 +154,11 @@ int main()
 							printbuffer.pop();
 						}
 					}
-					cout << "Command" << commandNum << ":" << line << endl;
+					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					commandNum++;
 				}
 				else if (command == "quit") {
+					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					commandScriptFile.close();
 					return 0;
 				}
@@ -185,7 +188,7 @@ int main()
 							data[offset - 1].print();
 						}
 					}
-					cout << "Command" << commandNum << ":" << line << endl;
+					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					commandNum++;
 				}
 				else if (command == "what_is") {
@@ -214,7 +217,7 @@ int main()
 							data[offset - 1].print();
 						}
 					}
-					cout << "Command" << commandNum << ":" << line;
+					logFile << "Command " << commandNum << ":\t" << scriptLine;
 					commandNum++;
 				}
 				else if (command == "what_is_in") {
@@ -245,7 +248,7 @@ int main()
 							data[offset - 1].print();
 						}
 					}
-					cout << "Command" << commandNum << ":" << line << endl;
+					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					commandNum++;
 				}
 			}

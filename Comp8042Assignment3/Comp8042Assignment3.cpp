@@ -43,7 +43,8 @@ int main()
 	string logFileName = "Log01.txt";
 	string recordFileName = "NM_All.txt";
 
-	ofstream logFile(logFileName);
+	ofstream logFile;
+	logFile.open(logFileName);
 
 	vector<GISDataEntry> data;
 	string line;
@@ -68,10 +69,10 @@ int main()
 		while (getline(commandScriptFile, line))
 		{
 			if (lineNumber == 1 || lineNumber == 2 || lineNumber == 3) {
-				logFile << line;
+				logFile << line << endl;
 			}
 			if (line[0] != ';') {
-				vector<string> splitLine = split(line, ';');
+				vector<string> splitLine = split(line, '\t');
 				string command = splitLine[0];
 
 				if (command == "world") {
@@ -88,9 +89,9 @@ int main()
 					logFile << endl;
 					logFile << "GIS Program";
 					logFile << endl;
-					logFile << "script:" << commandScriptFileName << endl;
-					logFile << "log:" << logFileName << endl;
-					logFile << "Start time:" << time << endl;
+					logFile << "script:\t\t" << commandScriptFileName << endl;
+					logFile << "log:\t\t" << logFileName << endl;
+					logFile << "Start time: " << time << endl;
 					logFile << "Quadtree children are printed in the order SW  SE  NE  NW" << endl;
 
 				}
@@ -251,7 +252,7 @@ int main()
 			lineNumber++;
 		}
 	}
-
+	logFile.close();
 	return 0;
 }
 

@@ -13,6 +13,10 @@ public:
 		minLong = left;
 	}
 
+	Rectangle() {
+
+	}
+
 	float getMaxLat() {
 		return maxLat;
 	}

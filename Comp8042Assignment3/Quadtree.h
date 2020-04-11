@@ -24,6 +24,10 @@ public:
 		isPartitioned = false;
 	}
 
+	Quadtree() {
+
+	}
+
 	void insert(GISDataEntry dataEntry, int offset) {
 		if (dataEntry.PRIM_LAT_DEC < area.getMaxLat() && 
 			dataEntry.PRIM_LAT_DEC > area.getMinLat() && 

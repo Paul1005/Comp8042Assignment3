@@ -41,12 +41,11 @@ vector<string> split(const string str, const string delim)
 	return tokens;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-	string databaseFileName = "db.txt";
-	string commandScriptFileName = "DemoScript01.txt";
-	string logFileName = "Log01.txt";
-	string recordFileName = "NM_All.txt";
+	string databaseFileName = argv[0];
+	string commandScriptFileName = argv[1];
+	string logFileName = argv[2];
 
 	ofstream logFile;
 	logFile.open(logFileName);
@@ -102,7 +101,7 @@ int main()
 				}
 				else if (command == "import") {
 					ofstream importDatabaseFile(databaseFileName);
-					recordFileName = splitLine[1];
+					string recordFileName = splitLine[1];
 					ifstream recordFile(recordFileName);
 					string recordLine;
 					if (recordFile.is_open())

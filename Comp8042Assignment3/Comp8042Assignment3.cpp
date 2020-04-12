@@ -8,6 +8,7 @@
 #include <queue>        
 #include <stdio.h>
 #include <string.h>
+#include <ctime>
 #include "Hashtable.h"
 #include "GISDataEntry.h"
 #include "Quadtree.h"
@@ -43,9 +44,9 @@ vector<string> split(const string str, const string delim)
 
 int main(int argc, char** argv)
 {
-	string databaseFileName = argv[0];
-	string commandScriptFileName = argv[1];
-	string logFileName = argv[2];
+	string databaseFileName = argv[1];
+	string commandScriptFileName = argv[2];
+	string logFileName = argv[3];
 
 	ofstream logFile;
 	logFile.open(logFileName);
@@ -95,7 +96,9 @@ int main(int argc, char** argv)
 					logFile << "dbFile:\t\t" << databaseFileName << endl;
 					logFile << "script:\t\t" << commandScriptFileName << endl;
 					logFile << "log:\t\t" << logFileName << endl;
-					logFile << "Start time: " << time << endl;
+					time_t now = time(0);
+					char* dt = ctime(&now);
+					logFile << "Start time: " << dt << endl;
 					logFile << "Quadtree children are printed in the order SW  SE  NE  NW" << endl;
 
 				}

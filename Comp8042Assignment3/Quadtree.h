@@ -139,17 +139,18 @@ public:
 
 	Quadtree* getChild(int index)
 	{
+		//SW  SE  NE  NW
 		if (index == 0) {
-			return topLeft;
-		}
-		else if (index == 1) {
-			return topRight;
-		}
-		else if (index == 2) {
 			return bottomLeft;
 		}
-		else if (index == 3) {
+		else if (index == 1) {
 			return bottomRight;
+		}
+		else if (index == 2) {
+			return topRight;
+		}
+		else if (index == 3) {
+			return topLeft;
 		}
 		else {
 			return nullptr;

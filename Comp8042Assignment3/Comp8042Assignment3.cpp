@@ -7,8 +7,12 @@
 #include <vector>
 #include <queue>        
 #include <stdio.h>
-#include <string.h>
-#include <ctime>
+#include <string>
+#include <sstream> 
+#include <time.h>
+#include <algorithm> 
+#include <cctype>
+#include <locale>
 #include "Hashtable.h"
 #include "GISDataEntry.h"
 #include "Quadtree.h"
@@ -27,18 +31,38 @@ float formatCoordinate(string coordinate) {
 	return coordinateNum;
 }
 
-vector<string> split(const string str, const string delim)
+//taken from https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
+// trim from start (in place)
+static inline void ltrim(string& s) {
+	s.erase(s.begin(), find_if(s.begin(), s.end(), [](int ch) {
+		return !std::isspace(ch);
+		}));
+}
+
+// trim from end (in place)
+static inline void rtrim(string& s) {
+	s.erase(find_if(s.rbegin(), s.rend(), [](int ch) {
+		return !isspace(ch);
+		}).base(), s.end());
+}
+
+// trim from both ends (in place)
+static inline void trim(string& s) {
+	ltrim(s);
+	rtrim(s);
+}
+
+// taken from https://www.fluentcpp.com/2017/04/21/how-to-split-a-string-in-c/
+vector<string> split(const string & s, char delimiter)
 {
 	vector<string> tokens;
-	size_t prev = 0, pos = 0;
-	do
+	string token;
+	istringstream tokenStream(s);
+	while (getline(tokenStream, token, delimiter))
 	{
-		pos = str.find(delim, prev);
-		if (pos == string::npos) pos = str.length();
-		string token = str.substr(prev, pos - prev);
-		if (!token.empty()) tokens.push_back(token);
-		prev = pos + delim.length();
-	} while (pos < str.length() && prev < str.length());
+		trim(token);
+		tokens.push_back(token);
+	}
 	return tokens;
 }
 
@@ -48,8 +72,7 @@ int main(int argc, char** argv)
 	string commandScriptFileName = argv[2];
 	string logFileName = argv[3];
 
-	ofstream logFile;
-	logFile.open(logFileName);
+	ofstream logFile(logFileName);
 
 	vector<GISDataEntry> data;
 	string scriptLine;
@@ -77,7 +100,7 @@ int main(int argc, char** argv)
 				logFile << scriptLine << endl;
 			}
 			if (scriptLine[0] != ';') {
-				vector<string> splitLine = split(scriptLine, "\t");
+				vector<string> splitLine = split(scriptLine, '\t');
 				string command = splitLine[0];
 
 				if (command == "world") {
@@ -97,8 +120,7 @@ int main(int argc, char** argv)
 					logFile << "script:\t\t" << commandScriptFileName << endl;
 					logFile << "log:\t\t" << logFileName << endl;
 					time_t now = time(0);
-					char* dt = ctime(&now);
-					logFile << "Start time: " << dt << endl;
+					logFile << "Start time: " << now << endl;
 					logFile << "Quadtree children are printed in the order SW  SE  NE  NW" << endl;
 
 				}

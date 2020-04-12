@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <math.h>
 #include <random>
+#include <fstream>
 
 using namespace std;
 
@@ -180,6 +181,20 @@ public:
 					cout << endl;
 				}
 				cout << endl;
+			}
+		}
+	}
+
+	void print(ofstream* logFile) {
+		for (int i = 0; i < c; i++) {
+			if (status[i] == OCCUPIED) {
+				*logFile << "feature name and state: " << buckets[i] << endl;
+				*logFile << "file offsets:" << endl;
+				for (int j = 0; j < offsets[i].size(); j++) {
+					*logFile << offsets[i][j];
+					*logFile << endl;
+				}
+				*logFile << endl;
 			}
 		}
 	}

@@ -14,11 +14,11 @@
 using namespace std;
 
 float formatCoordinate(string coordinate) {
+	char direction = coordinate[coordinate.size() - 1];
 	coordinate = coordinate.substr(0, coordinate.size() - 1);
 	float coordinateNum = stof(coordinate);
-	char direction = coordinate[coordinate.size() - 1];
 
-	if (direction == 'S' || direction == 'E') {
+	if (direction == 'S' || direction == 'W') {
 		coordinateNum *= -1;
 	}
 	return coordinateNum;
@@ -76,10 +76,10 @@ int main()
 				string command = splitLine[0];
 
 				if (command == "world") {
-					maxLat = formatCoordinate(splitLine[1]);
-					minLat = formatCoordinate(splitLine[2]);
-					maxLong = formatCoordinate(splitLine[3]);
-					minLong = formatCoordinate(splitLine[4]);
+					minLong = formatCoordinate(splitLine[1]);
+					maxLong = formatCoordinate(splitLine[2]);
+					minLat = formatCoordinate(splitLine[3]);
+					maxLat = formatCoordinate(splitLine[4]);
 
 					Rectangle rect1 = Rectangle(maxLat, minLat, maxLong, minLong);
 					quadtree = Quadtree(4, rect1);
@@ -134,27 +134,27 @@ int main()
 				}
 				else if (command == "debug") {
 					string subcommand = splitLine[1];
+					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					if (subcommand == "quad") {
-						quadtree.print();
+						quadtree.print(&logFile);
 					}
 					else if (subcommand == "hash") {
-						hashtable.print();
+						hashtable.print(&logFile);
 					}
 					else if (subcommand == "pool") {
 						queue<tuple<string, string, float, float, vector<int>>> printbuffer = buffer;
 						for (int i = 0; i < buffer.size(); i++)
 						{
-							cout << get<0>(printbuffer.back()) << endl;
-							cout << get<1>(printbuffer.back()) << endl;
-							cout << get<2>(printbuffer.back()) << endl;
-							cout << get<3>(printbuffer.back()) << endl;
+							logFile << get<0>(printbuffer.back()) << endl;
+							logFile << get<1>(printbuffer.back()) << endl;
+							logFile << get<2>(printbuffer.back()) << endl;
+							logFile << get<3>(printbuffer.back()) << endl;
 							for (int j = 0; j < get<4>(printbuffer.back()).size(); j++) {
-								cout << get<4>(printbuffer.back())[j] << endl;
+								logFile << get<4>(printbuffer.back())[j] << endl;
 							}
 							printbuffer.pop();
 						}
 					}
-					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					commandNum++;
 				}
 				else if (command == "quit") {
@@ -175,7 +175,7 @@ int main()
 							buffer.push(newData);
 							for (int i = 0; i < offsets.size(); i++) {
 								int offset = get<4>(buffer.back())[i];
-								data[offset - 1].print();
+								data[offset - 1].print(&logFile);
 							}
 						}
 						else {
@@ -185,7 +185,7 @@ int main()
 					else {
 						for (int i = 0; i < get<4>(buffer.back()).size(); i++) {
 							int offset = get<4>(buffer.back())[i];
-							data[offset - 1].print();
+							data[offset - 1].print(&logFile);
 						}
 					}
 					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
@@ -204,7 +204,7 @@ int main()
 							buffer.push(newData);
 							for (int i = 0; i < offsets.size(); i++) {
 								int offset = get<4>(buffer.back())[i];
-								data[offset - 1].print();
+								data[offset - 1].print(&logFile);
 							}
 						}
 						else {
@@ -214,7 +214,7 @@ int main()
 					else {
 						for (int i = 0; i < get<4>(buffer.back()).size(); i++) {
 							int offset = get<4>(buffer.back())[i];
-							data[offset - 1].print();
+							data[offset - 1].print(&logFile);
 						}
 					}
 					logFile << "Command " << commandNum << ":\t" << scriptLine;
@@ -235,7 +235,7 @@ int main()
 							buffer.push(newData);
 							for (int i = 0; i < offsets.size(); i++) {
 								int offset = get<4>(buffer.back())[i];
-								data[offset - 1].print();
+								data[offset - 1].print(&logFile);
 							}
 						}
 						else {
@@ -245,7 +245,7 @@ int main()
 					else {
 						for (int i = 0; i < get<4>(buffer.back()).size(); i++) {
 							int offset = get<4>(buffer.back())[i];
-							data[offset - 1].print();
+							data[offset - 1].print(&logFile);
 						}
 					}
 					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;

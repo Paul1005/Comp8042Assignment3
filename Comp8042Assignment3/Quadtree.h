@@ -1,5 +1,6 @@
 #include <array>
 #include <iostream>
+#include <fstream>
 #include "Rectangle.h"
 #include "DataSet.h"
 #include "GISDataEntry.h"
@@ -28,11 +29,23 @@ public:
 
 	}
 
+	float formatCoordinate(string coordinate) {
+		char direction = coordinate[coordinate.size() - 1];
+		coordinate = coordinate.substr(0, coordinate.size() - 1);
+		float coordinateNum = stof(coordinate);
+
+		if (direction == 'S' || direction == 'W') {
+			coordinateNum *= -1;
+		}
+		return coordinateNum;
+	}
+
 	void insert(GISDataEntry dataEntry, int offset) {
-		if (dataEntry.PRIM_LAT_DEC < area.getMaxLat() && 
-			dataEntry.PRIM_LAT_DEC > area.getMinLat() && 
-			dataEntry.PRIM_LONG_DEC < area.getMaxLong() && 
-			dataEntry.PRIM_LONG_DEC > area.getMinLong()) { // if it fits in the designated area
+		float maxLat = formatCoordinate(dataEntry.PRIMARY_LAT_DMS);
+		float minLat = formatCoordinate(dataEntry.PRIMARY_LAT_DMS);
+		float maxLong = formatCoordinate(dataEntry.PRIM_LONG_DMS);
+		float minLong = formatCoordinate(dataEntry.PRIM_LONG_DMS);
+		if (maxLat < area.getMaxLat() && minLat > area.getMinLat() && maxLong < area.getMaxLong() && minLong > area.getMinLong()) { // if it fits in the designated area
 			bool wasAddedToExistingDataSet = false;
 			for (int i = 0; i < dataSets.size(); i++) { // see if we can add it to an existing data point
 				if (dataSets[i].coordinate.first == dataEntry.PRIM_LAT_DEC && dataSets[i].coordinate.second == dataEntry.PRIM_LONG_DEC) {
@@ -67,27 +80,27 @@ public:
 						bottomRight = new Quadtree(4, bottomRightRectangle);
 
 						for (int i = 0; i < dataSets.size(); i++) { // insert each of our old datasets into the children
-							if (dataSets[i].coordinate.first < topLeftRectangle.getMaxLat() && 
-								dataSets[i].coordinate.first > topLeftRectangle.getMinLat() && 
-								dataSets[i].coordinate.second < topLeftRectangle.getMaxLong() && 
+							if (dataSets[i].coordinate.first < topLeftRectangle.getMaxLat() &&
+								dataSets[i].coordinate.first > topLeftRectangle.getMinLat() &&
+								dataSets[i].coordinate.second < topLeftRectangle.getMaxLong() &&
 								dataSets[i].coordinate.second > topLeftRectangle.getMinLong()) {
 								topLeft->addDataSet(dataSets[i]);
 							}
-							else if (dataSets[i].coordinate.first < topRightRectangle.getMaxLat() && 
-								dataSets[i].coordinate.first > topRightRectangle.getMinLat() && 
-								dataSets[i].coordinate.second < topRightRectangle.getMaxLong() && 
+							else if (dataSets[i].coordinate.first < topRightRectangle.getMaxLat() &&
+								dataSets[i].coordinate.first > topRightRectangle.getMinLat() &&
+								dataSets[i].coordinate.second < topRightRectangle.getMaxLong() &&
 								dataSets[i].coordinate.second > topRightRectangle.getMinLong()) {
 								topRight->addDataSet(dataSets[i]);
 							}
-							else if (dataSets[i].coordinate.first < bottomLeftRectangle.getMaxLat() && 
-								dataSets[i].coordinate.first > bottomLeftRectangle.getMinLat() && 
-								dataSets[i].coordinate.second < bottomLeftRectangle.getMaxLong() && 
+							else if (dataSets[i].coordinate.first < bottomLeftRectangle.getMaxLat() &&
+								dataSets[i].coordinate.first > bottomLeftRectangle.getMinLat() &&
+								dataSets[i].coordinate.second < bottomLeftRectangle.getMaxLong() &&
 								dataSets[i].coordinate.second > bottomLeftRectangle.getMinLong()) {
 								bottomLeft->addDataSet(dataSets[i]);
 							}
-							else if (dataSets[i].coordinate.first < bottomRightRectangle.getMaxLat() && 
-								dataSets[i].coordinate.first > bottomRightRectangle.getMinLat() && 
-								dataSets[i].coordinate.second < bottomRightRectangle.getMaxLong() && 
+							else if (dataSets[i].coordinate.first < bottomRightRectangle.getMaxLat() &&
+								dataSets[i].coordinate.first > bottomRightRectangle.getMinLat() &&
+								dataSets[i].coordinate.second < bottomRightRectangle.getMaxLong() &&
 								dataSets[i].coordinate.second > bottomRightRectangle.getMinLong()) {
 								bottomRight->addDataSet(dataSets[i]);
 							}
@@ -197,6 +210,25 @@ public:
 					cout << offset << endl;;
 				}
 				cout << endl;
+			}
+		}
+	}
+
+	void print(ofstream* logFile) {
+		if (isPartitioned) {
+			for (int i = 0; i < 4; i++) {
+				getChild(i)->print(logFile);
+			}
+		}
+		else {
+			for (DataSet dataSet : dataSets) {
+				*logFile << "latitude: " << dataSet.coordinate.first << endl;;
+				*logFile << "longitude: " << dataSet.coordinate.second << endl;;
+				*logFile << "file offsets:" << endl;
+				for (int offset : dataSet.offsets) {
+					*logFile << offset << endl;;
+				}
+				*logFile << endl;
 			}
 		}
 	}

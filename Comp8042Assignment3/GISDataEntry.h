@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 #pragma once
@@ -251,6 +252,28 @@ public:
 		cout << "MAP_NAME: " << MAP_NAME << '\n';
 		cout << "DATE_CREATED: " << DATE_CREATED << '\n';
 		cout << "DATE_EDITED: " << DATE_EDITED << '\n' << '\n';
+	}
+	void print(ofstream* logFile) {
+		*logFile << "FEATURE_ID: " << FEATURE_ID << '\n';
+		*logFile << "FEATURE_NAME: " << FEATURE_NAME << '\n';
+		*logFile << "FEATURE_CLASS: " << FEATURE_CLASS << '\n';
+		*logFile << "STATE_ALPHA: " << STATE_ALPHA << '\n';
+		*logFile << "STATE_NUMERIC: " << STATE_NUMERIC << '\n';
+		*logFile << "COUNTY_NAME: " << COUNTY_NAME << '\n';
+		*logFile << "COUNTY_NUMERIC: " << COUNTY_NUMERIC << '\n';
+		*logFile << "PRIMARY_LAT_DMS: " << PRIMARY_LAT_DMS << '\n';
+		*logFile << "PRIM_LONG_DMS: " << PRIM_LONG_DMS << '\n';
+		*logFile << "PRIM_LAT_DEC: " << PRIM_LAT_DEC << '\n';
+		*logFile << "PRIM_LONG_DEC: " << PRIM_LONG_DEC << '\n';
+		*logFile << "SOURCE_LAT_DMS: " << SOURCE_LAT_DMS << '\n';
+		*logFile << "SOURCE_LONG_DMS: " << SOURCE_LONG_DMS << '\n';
+		*logFile << "SOURCE_LAT_DEC: " << SOURCE_LAT_DEC << '\n';
+		*logFile << "SOURCE_LONG_DEC: " << SOURCE_LONG_DEC << '\n';
+		*logFile << "ELEV_IN_M: " << ELEV_IN_M << '\n';
+		*logFile << "ELEV_IN_FT: " << ELEV_IN_FT << '\n';
+		*logFile << "MAP_NAME: " << MAP_NAME << '\n';
+		*logFile << "DATE_CREATED: " << DATE_CREATED << '\n';
+		*logFile << "DATE_EDITED: " << DATE_EDITED << '\n' << '\n';
 	}
 };
 

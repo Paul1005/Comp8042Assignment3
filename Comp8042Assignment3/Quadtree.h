@@ -151,6 +151,9 @@ public:
 		else if (index == 3) {
 			return bottomRight;
 		}
+		else {
+			return nullptr;
+		}
 	}
 
 	vector<int> find(float latitude, float longitude) {

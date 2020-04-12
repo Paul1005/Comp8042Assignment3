@@ -6,6 +6,8 @@
 #include <fstream>
 #include <vector>
 #include <queue>        
+#include <stdio.h>
+#include <string.h>
 #include "Hashtable.h"
 #include "GISDataEntry.h"
 #include "Quadtree.h"
@@ -24,16 +26,19 @@ float formatCoordinate(string coordinate) {
 	return coordinateNum;
 }
 
-vector<std::string> split(string strToSplit, char delimeter)
+vector<string> split(const string str, const string delim)
 {
-	stringstream ss(strToSplit);
-	string item;
-	vector<string> splittedStrings;
-	while (getline(ss, item, delimeter))
+	vector<string> tokens;
+	size_t prev = 0, pos = 0;
+	do
 	{
-		splittedStrings.push_back(item);
-	}
-	return splittedStrings;
+		pos = str.find(delim, prev);
+		if (pos == string::npos) pos = str.length();
+		string token = str.substr(prev, pos - prev);
+		if (!token.empty()) tokens.push_back(token);
+		prev = pos + delim.length();
+	} while (pos < str.length() && prev < str.length());
+	return tokens;
 }
 
 int main()
@@ -72,7 +77,7 @@ int main()
 				logFile << scriptLine << endl;
 			}
 			if (scriptLine[0] != ';') {
-				vector<string> splitLine = split(scriptLine, '\t');
+				vector<string> splitLine = split(scriptLine, "\t");
 				string command = splitLine[0];
 
 				if (command == "world") {

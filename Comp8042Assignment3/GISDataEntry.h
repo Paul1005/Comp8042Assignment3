@@ -12,7 +12,7 @@ public:
 
 		int currentPosition = line.find(delimiter);
 		if (currentPosition == 0) {
-			FEATURE_ID = NULL;
+			FEATURE_ID = -1;
 		}
 		else {
 			FEATURE_ID = stoi(line.substr(0, currentPosition));
@@ -52,7 +52,7 @@ public:
 
 		currentPosition = line.find(delimiter);
 		if (currentPosition == 0) {
-			STATE_NUMERIC = NULL;
+			STATE_NUMERIC = -1;
 		}
 		else {
 			STATE_NUMERIC = stoi(line.substr(0, currentPosition));
@@ -72,7 +72,7 @@ public:
 
 		currentPosition = line.find(delimiter);
 		if (currentPosition == 0) {
-			COUNTY_NUMERIC = NULL;
+			COUNTY_NUMERIC = -1;
 		}
 		else {
 			COUNTY_NUMERIC = stoi(line.substr(0, currentPosition));
@@ -102,7 +102,7 @@ public:
 
 		currentPosition = line.find(delimiter);
 		if (currentPosition == 0) {
-			PRIM_LAT_DEC = NULL;
+			PRIM_LAT_DEC = -1;
 		}
 		else {
 			PRIM_LAT_DEC = stof(line.substr(0, currentPosition));
@@ -112,7 +112,7 @@ public:
 
 		currentPosition = line.find(delimiter);
 		if (currentPosition == 0) {
-			PRIM_LONG_DEC = NULL;
+			PRIM_LONG_DEC = -1;
 		}
 		else {
 			PRIM_LONG_DEC = stof(line.substr(0, currentPosition));
@@ -142,7 +142,7 @@ public:
 
 		currentPosition = line.find(delimiter);
 		if (currentPosition == 0) {
-			SOURCE_LAT_DEC = NULL;
+			SOURCE_LAT_DEC = -1;
 		}
 		else {
 			SOURCE_LAT_DEC = stof(line.substr(0, currentPosition));
@@ -152,7 +152,7 @@ public:
 
 		currentPosition = line.find(delimiter);
 		if (currentPosition == 0) {
-			SOURCE_LONG_DEC = NULL;
+			SOURCE_LONG_DEC = -1;
 		}
 		else {
 			SOURCE_LONG_DEC = stof(line.substr(0, currentPosition));
@@ -162,7 +162,7 @@ public:
 
 		currentPosition = line.find(delimiter);
 		if (currentPosition == 0) {
-			ELEV_IN_M = NULL;
+			ELEV_IN_M = -1;
 		}
 		else {
 			ELEV_IN_M = stoi(line.substr(0, currentPosition));
@@ -172,7 +172,7 @@ public:
 
 		currentPosition = line.find(delimiter);
 		if (currentPosition == 0) {
-			ELEV_IN_FT = NULL;
+			ELEV_IN_FT = -1;
 		}
 		else {
 			ELEV_IN_FT = stoi(line.substr(0, currentPosition));

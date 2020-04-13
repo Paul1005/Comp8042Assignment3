@@ -5,7 +5,7 @@
 #include <fstream>
 
 using namespace std;
-
+// based on lab 5 and 6
 template <typename K>
 #pragma once
 class Hashtable {

@@ -230,30 +230,7 @@ public:
 	string DATE_CREATED;
 	string DATE_EDITED;
 
-	void print() {
-		//FEATURE_ID|FEATURE_NAME|FEATURE_CLASS|STATE_ALPHA|STATE_NUMERIC|COUNTY_NAME|COUNTY_NUMERIC|PRIMARY_LAT_DMS|PRIM_LONG_DMS|PRIM_LAT_DEC|PRIM_LONG_DEC|SOURCE_LAT_DMS|SOURCE_LONG_DMS|SOURCE_LAT_DEC|SOURCE_LONG_DEC|ELEV_IN_M|ELEV_IN_FT|MAP_NAME|DATE_CREATED|DATE_EDITED.
-		cout << "FEATURE_ID: " << FEATURE_ID << '\n';
-		cout << "FEATURE_NAME: " << FEATURE_NAME << '\n';
-		cout << "FEATURE_CLASS: " << FEATURE_CLASS << '\n';
-		cout << "STATE_ALPHA: " << STATE_ALPHA << '\n';
-		cout << "STATE_NUMERIC: " << STATE_NUMERIC << '\n';
-		cout << "COUNTY_NAME: " << COUNTY_NAME << '\n';
-		cout << "COUNTY_NUMERIC: " << COUNTY_NUMERIC << '\n';
-		cout << "PRIMARY_LAT_DMS: " << PRIMARY_LAT_DMS << '\n';
-		cout << "PRIM_LONG_DMS: " << PRIM_LONG_DMS << '\n';
-		cout << "PRIM_LAT_DEC: " << PRIM_LAT_DEC << '\n';
-		cout << "PRIM_LONG_DEC: " << PRIM_LONG_DEC << '\n';
-		cout << "SOURCE_LAT_DMS: " << SOURCE_LAT_DMS << '\n';
-		cout << "SOURCE_LONG_DMS: " << SOURCE_LONG_DMS << '\n';
-		cout << "SOURCE_LAT_DEC: " << SOURCE_LAT_DEC << '\n';
-		cout << "SOURCE_LONG_DEC: " << SOURCE_LONG_DEC << '\n';
-		cout << "ELEV_IN_M: " << ELEV_IN_M << '\n';
-		cout << "ELEV_IN_FT: " << ELEV_IN_FT << '\n';
-		cout << "MAP_NAME: " << MAP_NAME << '\n';
-		cout << "DATE_CREATED: " << DATE_CREATED << '\n';
-		cout << "DATE_EDITED: " << DATE_EDITED << '\n' << '\n';
-	}
-	void print(ofstream* logFile) {
+	void printlong(ofstream* logFile) {
 		*logFile << "FEATURE_ID: " << FEATURE_ID << '\n';
 		*logFile << "FEATURE_NAME: " << FEATURE_NAME << '\n';
 		*logFile << "FEATURE_CLASS: " << FEATURE_CLASS << '\n';
@@ -274,6 +251,21 @@ public:
 		*logFile << "MAP_NAME: " << MAP_NAME << '\n';
 		*logFile << "DATE_CREATED: " << DATE_CREATED << '\n';
 		*logFile << "DATE_EDITED: " << DATE_EDITED << '\n' << '\n';
+	}
+
+	void printwhat_is(ofstream* logFile) {
+		//11390:  Ouray  (107d 44m 21s West, 37d 57m 24s North)
+		*logFile  << COUNTY_NAME << "  (" << PRIM_LONG_DMS << ", " << PRIMARY_LAT_DMS << ")" << endl;
+	}
+
+	void printwhat_is_at(ofstream* logFile) {
+		//39239:  Radium Springs Swimming Pool  Ouray  CO
+		*logFile << FEATURE_NAME << "  " << COUNTY_NAME << "  " << STATE_ALPHA << endl;
+	}
+
+	void printwhat_is_in(ofstream* logFile) {
+		//57123: Ouray  CO(107d 40m 17s West, 38d 1m 22s North)
+		*logFile << COUNTY_NAME << " " << STATE_ALPHA << "(" << PRIM_LONG_DMS << ", " << PRIMARY_LAT_DMS << ")" << endl;
 	}
 };
 

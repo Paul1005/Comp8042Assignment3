@@ -41,14 +41,12 @@ public:
 	}
 
 	void insert(GISDataEntry dataEntry, int offset) {
-		float maxLat = formatCoordinate(dataEntry.PRIMARY_LAT_DMS);
-		float minLat = formatCoordinate(dataEntry.PRIMARY_LAT_DMS);
-		float maxLong = formatCoordinate(dataEntry.PRIM_LONG_DMS);
-		float minLong = formatCoordinate(dataEntry.PRIM_LONG_DMS);
-		if (maxLat < area.getMaxLat() && minLat > area.getMinLat() && maxLong < area.getMaxLong() && minLong > area.getMinLong()) { // if it fits in the designated area
+		float latitude = formatCoordinate(dataEntry.PRIMARY_LAT_DMS);
+		float longitude = formatCoordinate(dataEntry.PRIM_LONG_DMS);
+		if (latitude < area.getMaxLat() && latitude > area.getMinLat() && longitude < area.getMaxLong() && longitude > area.getMinLong()) { // if it fits in the designated area
 			bool wasAddedToExistingDataSet = false;
 			for (int i = 0; i < dataSets.size(); i++) { // see if we can add it to an existing data point
-				if (dataSets[i].coordinate.first == dataEntry.PRIM_LAT_DEC && dataSets[i].coordinate.second == dataEntry.PRIM_LONG_DEC) {
+				if (dataSets[i].coordinate.first == latitude && dataSets[i].coordinate.second == longitude) {
 					dataSets[i].addOffset(offset);
 					wasAddedToExistingDataSet = true;
 					break;
@@ -118,7 +116,7 @@ public:
 					bottomRight->insert(dataEntry, offset);
 				}
 				else { // if there's room, create a new dataset
-					DataSet newDataSet(dataEntry.PRIM_LAT_DEC, dataEntry.PRIM_LONG_DEC);
+					DataSet newDataSet(latitude, longitude);
 					newDataSet.addOffset(offset);
 					dataSets.push_back(newDataSet);
 				}
@@ -139,18 +137,17 @@ public:
 
 	Quadtree* getChild(int index)
 	{
-		//SW  SE  NE  NW
 		if (index == 0) {
-			return bottomLeft;
+			return topLeft;
 		}
 		else if (index == 1) {
-			return bottomRight;
-		}
-		else if (index == 2) {
 			return topRight;
 		}
+		else if (index == 2) {
+			return bottomLeft;
+		}
 		else if (index == 3) {
-			return topLeft;
+			return bottomRight;
 		}
 		else {
 			return nullptr;
@@ -199,25 +196,6 @@ public:
 		return offsets;
 	}
 
-	void print() {
-		if (isPartitioned) {
-			for (int i = 0; i < 4; i++) {
-				getChild(i)->print();
-			}
-		}
-		else {
-			for (DataSet dataSet : dataSets) {
-				cout << "latitude: " << dataSet.coordinate.first << endl;;
-				cout << "longitude: " << dataSet.coordinate.second << endl;;
-				cout << "file offsets:" << endl;
-				for (int offset : dataSet.offsets) {
-					cout << offset << endl;;
-				}
-				cout << endl;
-			}
-		}
-	}
-
 	void print(ofstream* logFile) {
 		if (isPartitioned) {
 			for (int i = 0; i < 4; i++) {
@@ -226,15 +204,14 @@ public:
 		}
 		else {
 			for (DataSet dataSet : dataSets) {
-				*logFile << "latitude: " << dataSet.coordinate.first << endl;;
-				*logFile << "longitude: " << dataSet.coordinate.second << endl;;
-				*logFile << "file offsets:" << endl;
+				*logFile << "[(" << fixed << dataSet.coordinate.first << ", " << dataSet.coordinate.second << "), ";
 				for (int offset : dataSet.offsets) {
-					*logFile << offset << endl;;
+					*logFile << offset << ", ";
 				}
-				*logFile << endl;
+				*logFile << "]";
 			}
 		}
+		*logFile << endl;
 	}
 private:
 	Quadtree* topLeft;

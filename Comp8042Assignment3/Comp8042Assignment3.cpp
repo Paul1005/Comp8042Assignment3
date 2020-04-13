@@ -53,7 +53,7 @@ static inline void trim(string& s) {
 }
 
 // taken from https://www.fluentcpp.com/2017/04/21/how-to-split-a-string-in-c/
-vector<string> split(const string & s, char delimiter)
+vector<string> split(const string& s, char delimiter)
 {
 	vector<string> tokens;
 	string token;
@@ -122,16 +122,16 @@ int main(int argc, char** argv)
 					time_t now = time(0);
 					logFile << "Start time: " << now << endl;
 					logFile << "Quadtree children are printed in the order SW  SE  NE  NW" << endl;
-
+					logFile << "--------------------------------------------------------------------------------" << endl;
 				}
 				else if (command == "import") {
 					ofstream importDatabaseFile(databaseFileName);
 					string recordFileName = splitLine[1];
 					ifstream recordFile(recordFileName);
 					string recordLine;
+					int offset = 0;
 					if (recordFile.is_open())
 					{
-						int offset = 0;
 						while (getline(recordFile, recordLine))
 						{
 							if (offset != 0) {
@@ -146,7 +146,7 @@ int main(int argc, char** argv)
 					string databaseLine;
 					if (exportDatabaseFile.is_open())
 					{
-						int offset = 0;
+						offset = 0;
 						while (getline(exportDatabaseFile, databaseLine))
 						{
 							GISDataEntry dataEntry(databaseLine);
@@ -159,6 +159,9 @@ int main(int argc, char** argv)
 					}
 					exportDatabaseFile.close();
 					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
+					logFile << endl;
+					logFile << "Imported Features by name: " << offset << endl;
+					logFile << "--------------------------------------------------------------------------------" << endl;
 					commandNum++;
 				}
 				else if (command == "debug") {
@@ -185,13 +188,20 @@ int main(int argc, char** argv)
 						}
 					}
 					commandNum++;
+					logFile << "--------------------------------------------------------------------------------" << endl;
 				}
 				else if (command == "quit") {
 					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
+					logFile << endl;
+					logFile << "Terminating execution of commands." << endl;
+					time_t now = time(0);
+					logFile << "End time: " << now << endl;
 					commandScriptFile.close();
+					logFile << "--------------------------------------------------------------------------------" << endl;
 					return 0;
 				}
 				else if (command == "what_is_at") {
+					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					latitude = formatCoordinate(splitLine[1]);
 					longitude = formatCoordinate(splitLine[2]);
 					if (buffer.size() == 0 || latitude != get<2>(buffer.back()) || longitude != get<3>(buffer.back())) {
@@ -204,23 +214,26 @@ int main(int argc, char** argv)
 							buffer.push(newData);
 							for (int i = 0; i < offsets.size(); i++) {
 								int offset = get<4>(buffer.back())[i];
-								data[offset - 1].print(&logFile);
+								logFile << offset << ": ";
+								data[offset].printwhat_is_at(&logFile);
 							}
 						}
 						else {
-							cout << "not found" << endl;
+							logFile << "not found" << endl;
 						}
 					}
 					else {
 						for (int i = 0; i < get<4>(buffer.back()).size(); i++) {
 							int offset = get<4>(buffer.back())[i];
-							data[offset - 1].print(&logFile);
+							logFile << offset << ": ";
+							data[offset].printwhat_is_at(&logFile);
 						}
 					}
-					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					commandNum++;
+					logFile << "--------------------------------------------------------------------------------" << endl;
 				}
 				else if (command == "what_is") {
+					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					featureName = splitLine[1];
 					state = splitLine[2];
 					if (buffer.size() == 0 || featureName != get<0>(buffer.back()) || state != get<1>(buffer.back())) {
@@ -233,27 +246,45 @@ int main(int argc, char** argv)
 							buffer.push(newData);
 							for (int i = 0; i < offsets.size(); i++) {
 								int offset = get<4>(buffer.back())[i];
-								data[offset - 1].print(&logFile);
+								logFile << offset << ": " ;
+								data[offset].printwhat_is(&logFile);
 							}
 						}
 						else {
-							cout << "not found" << endl;
+							logFile << "not found" << endl;
 						}
 					}
 					else {
 						for (int i = 0; i < get<4>(buffer.back()).size(); i++) {
 							int offset = get<4>(buffer.back())[i];
-							data[offset - 1].print(&logFile);
+							logFile << offset << ": ";
+							data[offset].printwhat_is(&logFile);
 						}
 					}
-					logFile << "Command " << commandNum << ":\t" << scriptLine;
 					commandNum++;
+					logFile << "--------------------------------------------------------------------------------" << endl;
 				}
 				else if (command == "what_is_in") {
-					latitude = formatCoordinate(splitLine[1]);
-					longitude = formatCoordinate(splitLine[2]);
-					halfHeight = stof(splitLine[3]);
-					halfWidth = stof(splitLine[4]);
+					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
+					string filter = "";
+					int position = 1;
+					bool isLong = false;
+					if (splitLine[position] == "-long") {
+						isLong = true;
+						position++;
+					}
+					else if (splitLine[position] == "-filter") {
+						position++;
+						filter = splitLine[position];
+						position++;
+					}
+					latitude = formatCoordinate(splitLine[position]);
+					position++;
+					longitude = formatCoordinate(splitLine[position]);
+					position++;
+					halfHeight = stof(splitLine[position]);
+					position++;
+					halfWidth = stof(splitLine[position]);
 					if (buffer.size() == 0 || latitude != get<2>(buffer.back()) || longitude != get<3>(buffer.back())) {
 						if (buffer.size() == 15) {
 							buffer.pop();
@@ -264,20 +295,125 @@ int main(int argc, char** argv)
 							buffer.push(newData);
 							for (int i = 0; i < offsets.size(); i++) {
 								int offset = get<4>(buffer.back())[i];
-								data[offset - 1].print(&logFile);
+								if (filter == "pop") {
+									if (data[offset].FEATURE_CLASS == "Populated Place") {
+										logFile << offset << ": ";
+										data[offset].printwhat_is_in(&logFile);
+									}
+								}
+								else if (filter == "water") {
+									if (data[offset].FEATURE_CLASS == "Arroyo" ||
+										data[offset].FEATURE_CLASS == "Bay" ||
+										data[offset].FEATURE_CLASS == "Bend" ||
+										data[offset].FEATURE_CLASS == "Canal" ||
+										data[offset].FEATURE_CLASS == "Channel" ||
+										data[offset].FEATURE_CLASS == "Falls" ||
+										data[offset].FEATURE_CLASS == "Glacier" ||
+										data[offset].FEATURE_CLASS == "Gut" ||
+										data[offset].FEATURE_CLASS == "Harbor" ||
+										data[offset].FEATURE_CLASS == "Lake" ||
+										data[offset].FEATURE_CLASS == "Rapids" ||
+										data[offset].FEATURE_CLASS == "Reservoir" ||
+										data[offset].FEATURE_CLASS == "Sea" ||
+										data[offset].FEATURE_CLASS == "Spring" ||
+										data[offset].FEATURE_CLASS == "Stream" ||
+										data[offset].FEATURE_CLASS == "Swamp" ||
+										data[offset].FEATURE_CLASS == "Well") {
+										logFile << offset << ": ";
+										data[offset].printwhat_is_in(&logFile);
+									}
+								}
+								else if (filter == "structure") {
+									if (data[offset].FEATURE_CLASS == "Airport" ||
+										data[offset].FEATURE_CLASS == "Bridge" ||
+										data[offset].FEATURE_CLASS == "Building" ||
+										data[offset].FEATURE_CLASS == "Church" ||
+										data[offset].FEATURE_CLASS == "Dam" ||
+										data[offset].FEATURE_CLASS == "Hospital" ||
+										data[offset].FEATURE_CLASS == "Levee" ||
+										data[offset].FEATURE_CLASS == "Park" ||
+										data[offset].FEATURE_CLASS == "Post Office" ||
+										data[offset].FEATURE_CLASS == "School" ||
+										data[offset].FEATURE_CLASS == "Tower" ||
+										data[offset].FEATURE_CLASS == "Tunnel") {
+										logFile << offset << ": ";
+										data[offset].printwhat_is_in(&logFile);
+									}
+								}
+								else {
+									logFile << offset << ": ";
+									if (isLong) {
+										data[offset].printlong(&logFile);
+									}
+									else {
+										data[offset].printwhat_is_in(&logFile);
+									}
+								}
 							}
 						}
 						else {
-							cout << "not found" << endl;
+							logFile << "not found" << endl;
 						}
 					}
 					else {
 						for (int i = 0; i < get<4>(buffer.back()).size(); i++) {
 							int offset = get<4>(buffer.back())[i];
-							data[offset - 1].print(&logFile);
+							if (filter == "pop") {
+								if (data[offset].FEATURE_CLASS == "Populated Place") {
+									logFile << offset << ": ";
+									data[offset].printwhat_is_in(&logFile);
+								}
+							}
+							else if (filter == "water") {
+								if (data[offset].FEATURE_CLASS == "Arroyo" ||
+									data[offset].FEATURE_CLASS == "Bay" ||
+									data[offset].FEATURE_CLASS == "Bend" ||
+									data[offset].FEATURE_CLASS == "Canal" ||
+									data[offset].FEATURE_CLASS == "Channel" ||
+									data[offset].FEATURE_CLASS == "Falls" ||
+									data[offset].FEATURE_CLASS == "Glacier" ||
+									data[offset].FEATURE_CLASS == "Gut" ||
+									data[offset].FEATURE_CLASS == "Harbor" ||
+									data[offset].FEATURE_CLASS == "Lake" ||
+									data[offset].FEATURE_CLASS == "Rapids" ||
+									data[offset].FEATURE_CLASS == "Reservoir" ||
+									data[offset].FEATURE_CLASS == "Sea" ||
+									data[offset].FEATURE_CLASS == "Spring" ||
+									data[offset].FEATURE_CLASS == "Stream" ||
+									data[offset].FEATURE_CLASS == "Swamp" ||
+									data[offset].FEATURE_CLASS == "Well") {
+									logFile << offset << ": ";
+									data[offset].printwhat_is_in(&logFile);
+								}
+							}
+							else if (filter == "structure") {
+								if (data[offset].FEATURE_CLASS == "Airport" ||
+									data[offset].FEATURE_CLASS == "Bridge" ||
+									data[offset].FEATURE_CLASS == "Building" ||
+									data[offset].FEATURE_CLASS == "Church" ||
+									data[offset].FEATURE_CLASS == "Dam" ||
+									data[offset].FEATURE_CLASS == "Hospital" ||
+									data[offset].FEATURE_CLASS == "Levee" ||
+									data[offset].FEATURE_CLASS == "Park" ||
+									data[offset].FEATURE_CLASS == "Post Office" ||
+									data[offset].FEATURE_CLASS == "School" ||
+									data[offset].FEATURE_CLASS == "Tower" ||
+									data[offset].FEATURE_CLASS == "Tunnel") {
+									logFile << offset << ": ";
+									data[offset].printwhat_is_in(&logFile);
+								}
+							}
+							else {
+								logFile << offset << ": ";
+								if (isLong) {
+									data[offset].printlong(&logFile);
+								}
+								else {
+									data[offset].printwhat_is_in(&logFile);
+								}
+							}
 						}
 					}
-					logFile << "Command " << commandNum << ":\t" << scriptLine << endl;
 					commandNum++;
 				}
 			}

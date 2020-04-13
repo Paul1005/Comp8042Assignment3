@@ -170,30 +170,21 @@ public:
 		return numOfRehashes;
 	}
 
-	void print() {
-		for (int i = 0; i < c; i++) {
-			if (status[i] == OCCUPIED) {
-				cout << "feature name and state: " << buckets[i] << endl;
-				cout << "file offsets:" << endl;
-				for (int j = 0; j < offsets[i].size(); j++) {
-					cout << offsets[i][j];
-					cout << endl;
-				}
-				cout << endl;
-			}
-		}
-	}
-
 	void print(ofstream* logFile) {
+		*logFile << endl;
+		*logFile << "Format of display is" << endl;
+		*logFile << "Slot number: data record" << endl;
+		*logFile << "Current table size is " << c << endl;
+		*logFile << "Number of elements in table is " << size << endl;
+		*logFile << endl;
+
 		for (int i = 0; i < c; i++) {
 			if (status[i] == OCCUPIED) {
-				*logFile << "feature name and state: " << buckets[i] << endl;
-				*logFile << "file offsets:" << endl;
+				*logFile << "\t  " << i << ":  [" << buckets[i] << ", [";
 				for (int j = 0; j < offsets[i].size(); j++) {
-					*logFile << offsets[i][j];
-					*logFile << endl;
+					*logFile << offsets[i][j] << ", ";
 				}
-				*logFile << endl;
+				*logFile << "]]" << endl;
 			}
 		}
 	}
